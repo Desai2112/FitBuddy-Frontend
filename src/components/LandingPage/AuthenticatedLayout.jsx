@@ -3,7 +3,6 @@ import AuthenticatedNavbar from "../../components/LandingPage/AuthenticatedNavba
 
 // This component will serve as a layout wrapper for authenticated pages
 const AuthenticatedLayout = ({ children }) => {
-  // Mock user data - in a real app, this would come from your auth context or API
   const user = {
     name: "John Doe",
     email: "john@example.com",

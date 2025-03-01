@@ -6,17 +6,23 @@ import Signup from './components/Auth/Signup';
 import Dashboard from './pages/LandingPage/Dashboard';
 import TrainingPage from './pages/Training Page/TrainingPage';
 import ProfilePage from './pages/LandingPage/ProfilePage';
+import BMICalculator from './components/LandingPage/BMICalculator';
+import DoctorAppointment from './pages/LandingPage/DoctorAppointment';
+import PdfViewer from './pages/LandingPage/PdfViewer';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        {/* <Route path="/" element={<PdfViewer />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/3d-training" element={<TrainingPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/bmi-calculator" element={<BMICalculator />} />
+        <Route path="/consultation" element={<DoctorAppointment />} />
       </Routes>
     </Router>
   );

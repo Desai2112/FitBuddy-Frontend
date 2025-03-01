@@ -94,7 +94,7 @@ const Hero = () => {
         {/* Reduced abstract shapes with simpler animations */}
         <motion.div 
           className="absolute top-20 left-20 w-48 h-48 rounded-full opacity-15"
-          style={{ background: 'linear-gradient(135deg, #0eab8f 0%, #0ba380 100%)' }}
+          style={{ background: 'linear-gradient(135deg, #0dcfcf 0%, #0fa2b2 100%)' }}
           animate={{
             scale: [1, 1.05, 1],
             transition: { duration: 8, repeat: Infinity, ease: "easeInOut" }
@@ -102,7 +102,7 @@ const Hero = () => {
         />
         <motion.div 
           className="absolute bottom-16 left-40 w-64 h-64 rounded-full opacity-10"
-          style={{ background: 'linear-gradient(135deg, #0ba380 0%, #0eab8f 100%)' }}
+          style={{ background: 'linear-gradient(135deg, #0fa2b2 0%, #0dcfcf 100%)' }}
           animate={{
             scale: [1.05, 1, 1.05],
             transition: { duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }
@@ -113,7 +113,7 @@ const Hero = () => {
         <motion.div 
           className="absolute top-1/4 right-1/4 w-32 h-32 opacity-10"
           style={{ 
-            background: 'linear-gradient(135deg, #0eab8f 0%, #0ba380 100%)',
+            background: 'linear-gradient(135deg, #0dcfcf 0%, #0fa2b2 100%)',
             borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%'
           }}
           animate={{
@@ -133,7 +133,7 @@ const Hero = () => {
               top: `${particle.y}%`,
               width: `${particle.size}px`,
               height: `${particle.size}px`,
-              background: particle.size > 2 ? 'linear-gradient(135deg, #0eab8f 0%, #0ba380 100%)' : '#0ba380',
+              background: particle.size > 2 ? 'linear-gradient(135deg, #0dcfcf 0%, #0fa2b2 100%)' : '#0fa2b2',
               opacity: particle.size > 2 ? 0.15 : 0.1
             }}
             animate={{
@@ -153,7 +153,7 @@ const Hero = () => {
         <motion.div 
           className="absolute inset-0" 
           style={{
-            backgroundImage: 'radial-gradient(circle, #0ba380 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, #0fa2b2 1px, transparent 1px)',
             backgroundSize: '40px 40px',
             opacity: 0.03
           }}
@@ -174,7 +174,7 @@ const Hero = () => {
               ],
               transition: { duration: 30, repeat: Infinity, ease: "easeInOut" }
             }}
-            fill="#0ba380"
+            fill="#0fa2b2"
           />
         </svg>
         
@@ -198,10 +198,10 @@ const Hero = () => {
               <span className="relative inline-block">
                 <motion.div 
                   className="absolute inset-0 opacity-50 -z-10 rounded-lg"
-                  style={{ background: 'linear-gradient(135deg, #0eab8f 0%, #0ba380 100%)' }}
+                  style={{ background: 'linear-gradient(135deg, #0dcfcf 0%, #0fa2b2 100%)' }}
                   variants={textBackgroundVariants}
                 />
-                <span style={{ color: '#0ba380' }}>stay lean</span>
+                <span style={{ color: '#0fa2b2' }}>stay lean</span>
               </span> <br className="hidden md:block" />live the dream!
             </motion.h1>
           </motion.div>
@@ -219,7 +219,7 @@ const Hero = () => {
           >
             <motion.button 
               className="px-6 py-3 text-white font-bold rounded-md transition duration-300 text-base"
-              style={{ background: 'linear-gradient(135deg, #0eab8f 0%, #0ba380 100%)' }}
+              style={{ background: 'linear-gradient(135deg, #0dcfcf 0%, #0fa2b2 100%)' }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -233,8 +233,8 @@ const Hero = () => {
               <span 
                 className="flex items-center justify-center w-10 h-10 rounded-full text-lg"
                 style={{ 
-                  background: 'rgba(14, 171, 143, 0.1)',
-                  color: '#0eab8f'
+                  background: 'rgba(13, 207, 207, 0.1)',
+                  color: '#0dcfcf'
                 }}
               >
                 &#9658;
@@ -248,24 +248,24 @@ const Hero = () => {
             className="bg-white p-5 rounded-lg shadow-lg max-w-md relative overflow-hidden"
             variants={cardVariants(0)}
             whileHover={{
-              boxShadow: "0px 10px 15px rgba(14, 171, 143, 0.15)",
+              boxShadow: "0px 10px 15px rgba(13, 207, 207, 0.15)",
               transition: { duration: 0.3 }
             }}
           >
             {/* Card background accent - simplified */}
             <motion.div 
               className="absolute -right-4 -bottom-4 w-24 h-24 rounded-full opacity-10"
-              style={{ background: 'linear-gradient(135deg, #0eab8f 0%, #0ba380 100%)' }}
+              style={{ background: 'linear-gradient(135deg, #0dcfcf 0%, #0fa2b2 100%)' }}
             />
             
             <div className="flex items-center gap-3 mb-3 relative z-10">
               <div 
                 className="p-2 rounded-full" 
-                style={{ background: 'rgba(14, 171, 143, 0.1)' }}
+                style={{ background: 'rgba(13, 207, 207, 0.1)' }}
               >
                 <span className="text-xl inline-block">⚡</span>
               </div>
-              <div className="font-semibold" style={{ color: '#0eab8f' }}>Get Started in Minutes</div>
+              <div className="font-semibold" style={{ color: '#0dcfcf' }}>Get Started in Minutes</div>
             </div>
             <p className="text-gray-600 text-sm relative z-10">
               Sign up, answer a few questions about your goals, and receive your personalized fitness plan instantly.
@@ -285,7 +285,7 @@ const Hero = () => {
             className="absolute w-72 h-72 rounded-full z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
             variants={imageVariants}
             style={{ 
-              background: 'linear-gradient(135deg, #0eab8f 0%, #0ba380 100%)',
+              background: 'linear-gradient(135deg, #0dcfcf 0%, #0fa2b2 100%)',
               opacity: 0.2
             }}
           />
@@ -293,7 +293,7 @@ const Hero = () => {
           {/* Single animated ring around the main image */}
           <motion.div 
             className="absolute w-80 h-80 rounded-full border-2 border-dashed z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{ borderColor: 'rgba(14, 171, 143, 0.1)' }}
+            style={{ borderColor: 'rgba(13, 207, 207, 0.1)' }}
             animate={{ 
               rotate: [0, 360],
               transition: { duration: 50, repeat: Infinity, ease: "linear" }
@@ -308,7 +308,7 @@ const Hero = () => {
             <motion.div 
               className="w-64 h-64 md:w-72 md:h-72 rounded-full overflow-hidden border-4 border-white shadow-xl"
               whileHover={{ 
-                boxShadow: "0px 0px 20px rgba(14, 171, 143, 0.2)",
+                boxShadow: "0px 0px 20px rgba(13, 207, 207, 0.2)",
                 transition: { duration: 0.3 }
               }}
             >
@@ -328,16 +328,16 @@ const Hero = () => {
             animate={floatingAnimations.aiCoach}
             whileHover={{
               scale: 1.05,
-              boxShadow: "0px 10px 15px rgba(14, 171, 143, 0.15)",
+              boxShadow: "0px 10px 15px rgba(13, 207, 207, 0.15)",
               transition: { duration: 0.3 }
             }}
           >
             <div className="flex items-center gap-2">
               <div 
                 className="flex items-center justify-center w-10 h-10 rounded-full"
-                style={{ background: 'rgba(14, 171, 143, 0.1)' }}
+                style={{ background: 'rgba(13, 207, 207, 0.1)' }}
               >
-                <span style={{ color: '#0eab8f' }} className="text-lg">🤖</span>
+                <span style={{ color: '#0dcfcf' }} className="text-lg">🤖</span>
               </div>
               <div>
                 <div className="font-bold text-gray-800 text-sm">AI Coach</div>
@@ -353,34 +353,34 @@ const Hero = () => {
             animate={floatingAnimations.mealPlans}
             whileHover={{
               scale: 1.05,
-              boxShadow: "0px 10px 15px rgba(14, 171, 143, 0.15)",
+              boxShadow: "0px 10px 15px rgba(13, 207, 207, 0.15)",
               transition: { duration: 0.3 }
             }}
           >
             <div className="text-gray-800 font-medium text-sm mb-2">Meal Plans</div>
             <div className="flex flex-wrap gap-1">
               <div className="w-7 h-7 rounded-md flex items-center justify-center text-xs"
-                 style={{ background: 'rgba(14, 171, 143, 0.1)' }}>
+                 style={{ background: 'rgba(13, 207, 207, 0.1)' }}>
                 🥗
               </div>
               <div className="w-7 h-7 rounded-md flex items-center justify-center text-xs"
-                 style={{ background: 'rgba(14, 171, 143, 0.2)' }}>
+                 style={{ background: 'rgba(13, 207, 207, 0.2)' }}>
                 🍎
               </div>
               <div className="w-7 h-7 rounded-md flex items-center justify-center text-xs"
-                 style={{ background: 'rgba(14, 171, 143, 0.1)' }}>
+                 style={{ background: 'rgba(13, 207, 207, 0.1)' }}>
                 🍗
               </div>
               <div className="w-7 h-7 rounded-md flex items-center justify-center text-xs"
-                 style={{ background: 'rgba(14, 171, 143, 0.2)' }}>
+                 style={{ background: 'rgba(13, 207, 207, 0.2)' }}>
                 🥚
               </div>
               <div className="w-7 h-7 rounded-md flex items-center justify-center text-xs"
-                 style={{ background: 'rgba(14, 171, 143, 0.1)' }}>
+                 style={{ background: 'rgba(13, 207, 207, 0.1)' }}>
                 🥑
               </div>
               <div className="w-7 h-7 rounded-md flex items-center justify-center text-xs"
-                 style={{ background: 'rgba(14, 171, 143, 0.2)' }}>
+                 style={{ background: 'rgba(13, 207, 207, 0.2)' }}>
                 🍓
               </div>
             </div>
@@ -393,16 +393,16 @@ const Hero = () => {
             animate={floatingAnimations.bmiCalculator}
             whileHover={{
               scale: 1.05,
-              boxShadow: "0px 10px 15px rgba(14, 171, 143, 0.15)",
+              boxShadow: "0px 10px 15px rgba(13, 207, 207, 0.15)",
               transition: { duration: 0.3 }
             }}
           >
             <div className="flex items-center gap-2">
               <div 
                 className="w-9 h-9 rounded-full flex items-center justify-center"
-                style={{ background: 'rgba(14, 171, 143, 0.1)' }}
+                style={{ background: 'rgba(13, 207, 207, 0.1)' }}
               >
-                <span style={{ color: '#0ba380' }} className="text-sm">📊</span>
+                <span style={{ color: '#0fa2b2' }} className="text-sm">📊</span>
               </div>
               <div>
                 <div className="font-medium text-sm">BMI Calculator</div>
@@ -412,7 +412,7 @@ const Hero = () => {
             <div className="mt-2 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
               <div 
                 className="h-full rounded-full w-3/5"
-                style={{ background: 'linear-gradient(90deg, #0eab8f 0%, #0ba380 100%)' }}
+                style={{ background: 'linear-gradient(90deg, #0dcfcf 0%, #0fa2b2 100%)' }}
               />
             </div>
           </motion.div>
@@ -424,23 +424,23 @@ const Hero = () => {
             animate={floatingAnimations.community}
             whileHover={{
               scale: 1.05,
-              boxShadow: "0px 10px 15px rgba(14, 171, 143, 0.15)",
+              boxShadow: "0px 10px 15px rgba(13, 207, 207, 0.15)",
               transition: { duration: 0.3 }
             }}
           >
-            <div className="text-sm font-medium mb-1" style={{ color: '#0eab8f' }}>FitBuddy Community</div>
+            <div className="text-sm font-medium mb-1" style={{ color: '#0dcfcf' }}>FitBuddy Community</div>
             <div className="flex -space-x-2">
               <div className="w-7 h-7 rounded-full border-2 border-white overflow-hidden">
                 <div className="w-full h-full flex items-center justify-center text-white text-xs" 
-                     style={{ background: '#0eab8f' }}>JM</div>
+                     style={{ background: '#0dcfcf' }}>JM</div>
               </div>
               <div className="w-7 h-7 rounded-full border-2 border-white overflow-hidden">
                 <div className="w-full h-full flex items-center justify-center text-white text-xs"
-                     style={{ background: '#0ba380' }}>KL</div>
+                     style={{ background: '#0fa2b2' }}>KL</div>
               </div>
               <div className="w-7 h-7 rounded-full border-2 border-white overflow-hidden">
                 <div className="w-full h-full flex items-center justify-center text-white text-xs"
-                     style={{ background: '#0eab8f' }}>TW</div>
+                     style={{ background: '#0dcfcf' }}>TW</div>
               </div>
               <div className="w-7 h-7 rounded-full border-2 border-white overflow-hidden">
                 <div className="w-full h-full bg-gray-400 flex items-center justify-center text-white text-xs">+5</div>
@@ -455,14 +455,14 @@ const Hero = () => {
             animate={floatingAnimations.recipeGenerator}
             whileHover={{
               scale: 1.05,
-              boxShadow: "0px 10px 15px rgba(14, 171, 143, 0.15)",
+              boxShadow: "0px 10px 15px rgba(13, 207, 207, 0.15)",
               transition: { duration: 0.3 }
             }}
           >
             <div className="flex items-center gap-2">
               <div 
                 className="w-8 h-8 rounded-full flex items-center justify-center"
-                style={{ background: 'rgba(14, 171, 143, 0.1)' }}
+                style={{ background: 'rgba(13, 207, 207, 0.1)' }}
               >
                 <span className="text-sm">🍽</span>
               </div>

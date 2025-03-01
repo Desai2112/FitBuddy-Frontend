@@ -4,10 +4,19 @@ import { motion } from 'framer-motion';
 const Banner = () => {
   return (
     <motion.div 
-      className="w-full bg-gradient-to-br from-slate-50 to-green-50 py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center justify-center overflow-hidden"
+      className="w-full bg-gradient-to-br from-light to-[#e6f9f9] py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center justify-center overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
+      style={{
+        '--light': '#f5f5f5',
+        '--dark': '#040404',
+        '--primary': '#0dcfcf',
+        '--secondary': '#0fa2b2',
+        '--accent': '#FF4D6D',
+        '--error': '#D71646',
+        '--success': '#E63946'
+      }}
     >
       <div className="w-full max-w-7xl mx-auto relative">
         <div className="flex flex-col md:flex-row items-center justify-between gap-12">
@@ -21,7 +30,7 @@ const Banner = () => {
             {/* Animated background elements */}
             <motion.div className="absolute inset-0 z-0">
               <motion.div 
-                className="absolute top-0 left-10 w-4/5 h-4/5 rounded-full border-8 border-slate-200 opacity-50"
+                className="absolute top-0 left-10 w-4/5 h-4/5 rounded-full border-8 border-[#0dcfcf]/20 opacity-50"
                 animate={{ 
                   rotate: 360,
                   scale: [1, 1.05, 1]
@@ -32,7 +41,7 @@ const Banner = () => {
                 }}
               />
               <motion.div 
-                className="absolute top-20 right-10 w-3/5 h-3/5 rounded-full border-8 border-blue-100 opacity-40"
+                className="absolute top-20 right-10 w-3/5 h-3/5 rounded-full border-8 border-[#0fa2b2]/20 opacity-40"
                 animate={{ 
                   rotate: -360,
                   scale: [1, 1.1, 1]
@@ -43,7 +52,7 @@ const Banner = () => {
                 }}
               />
               <motion.div 
-                className="absolute bottom-10 left-20 w-2/5 h-2/5 rounded-full border-8 border-emerald-100 opacity-30"
+                className="absolute bottom-10 left-20 w-2/5 h-2/5 rounded-full border-8 border-[#FF4D6D]/20 opacity-30"
                 animate={{ 
                   rotate: 180,
                   scale: [1, 1.15, 1]
@@ -76,7 +85,7 @@ const Banner = () => {
                     <motion.path
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
-                      stroke="#3B82F6"
+                      stroke="#0dcfcf"
                       strokeWidth="3"
                       strokeDasharray="100, 100"
                       strokeLinecap="round"
@@ -86,7 +95,7 @@ const Banner = () => {
                     />
                   </svg>
                   <motion.div 
-                    className="absolute top-1/2 left-0 w-full h-full flex items-center justify-center font-bold text-blue-600 text-lg mt-1"
+                    className="absolute top-1/2 left-0 w-full h-full flex items-center justify-center font-bold text-[#0dcfcf] text-lg mt-1"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 2, duration: 0.5 }}
@@ -112,7 +121,7 @@ const Banner = () => {
                   <motion.path 
                     d="M0,15 L10,18 L20,10 L30,20 L40,15 L50,25 L60,5 L70,15 L80,10 L90,5 L100,15" 
                     fill="none" 
-                    stroke="#4F46E5" 
+                    stroke="#FF4D6D" 
                     strokeWidth="2"
                     initial={{ pathLength: 0 }}
                     animate={{ pathLength: 1 }}
@@ -124,7 +133,7 @@ const Banner = () => {
             
             {/* Main image container */}
             <motion.div 
-              className="relative z-0 rounded-full bg-gradient-to-br from-slate-100 to-blue-50 w-4/5 h-4/5 overflow-hidden mx-auto shadow-2xl"
+              className="relative z-0 rounded-full bg-gradient-to-br from-[#f5f5f5] to-[#dafdfd] w-4/5 h-4/5 overflow-hidden mx-auto shadow-2xl"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.3 }}
@@ -135,12 +144,15 @@ const Banner = () => {
             >
               <div className="h-full w-full flex items-center justify-center">
                 <motion.div
-                  className="w-full h-full bg-gradient-to-r from-slate-200/20 to-blue-200/20 absolute"
+                  className="w-full h-full absolute"
+                  style={{
+                    background: "linear-gradient(to right, rgba(13, 207, 207, 0.1), rgba(255, 77, 109, 0.1))"
+                  }}
                   animate={{ 
                     background: [
-                      "linear-gradient(to right, rgba(226, 232, 240, 0.2), rgba(191, 219, 254, 0.2))",
-                      "linear-gradient(to right, rgba(191, 219, 254, 0.2), rgba(226, 232, 240, 0.2))",
-                      "linear-gradient(to right, rgba(226, 232, 240, 0.2), rgba(191, 219, 254, 0.2))"
+                      "linear-gradient(to right, rgba(13, 207, 207, 0.1), rgba(255, 77, 109, 0.1))",
+                      "linear-gradient(to right, rgba(255, 77, 109, 0.1), rgba(13, 207, 207, 0.1))",
+                      "linear-gradient(to right, rgba(13, 207, 207, 0.1), rgba(255, 77, 109, 0.1))"
                     ]
                   }}
                   transition={{
@@ -166,13 +178,13 @@ const Banner = () => {
             transition={{ duration: 1, type: "spring", stiffness: 50 }}
           >
             <motion.h1 
-              className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-gray-800"
+              className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-[#040404]"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
               <motion.span 
-                className="block bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500"
+                className="block bg-clip-text text-transparent bg-gradient-to-r from-[#0dcfcf] to-[#FF4D6D]"
                 animate={{ 
                   backgroundPosition: ['0% center', '100% center', '0% center'] 
                 }}
@@ -199,7 +211,7 @@ const Banner = () => {
             </motion.p>
             
             <motion.button 
-              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold py-4 px-10 rounded-lg shadow-xl text-lg"
+              className="bg-gradient-to-r from-[#0dcfcf] to-[#0fa2b2] text-white font-bold py-4 px-10 rounded-lg shadow-xl text-lg"
               whileHover={{ 
                 scale: 1.05,
                 boxShadow: "0 10px 25px rgba(0,0,0,0.15)",

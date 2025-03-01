@@ -44,7 +44,7 @@ const Footer = () => {
         {/* Animated floating bubbles */}
         <motion.div 
           className="w-24 h-24 rounded-full bg-opacity-10 absolute"
-          style={{ backgroundColor: '#0da889', top: '15%', left: '5%' }}
+          style={{ backgroundColor: '#0dcfcf', top: '15%', left: '5%' }}
           animate={{
             y: [0, 30, 0],
             scale: [1, 1.1, 1],
@@ -57,7 +57,7 @@ const Footer = () => {
         />
         <motion.div 
           className="w-32 h-32 rounded-full bg-opacity-10 absolute"
-          style={{ backgroundColor: '#0eaa8d', top: '60%', right: '10%' }}
+          style={{ backgroundColor: '#0fa2b2', top: '60%', right: '10%' }}
           animate={{
             y: [0, -40, 0],
             scale: [1, 1.2, 1],
@@ -70,7 +70,7 @@ const Footer = () => {
         />
         <motion.div 
           className="w-20 h-20 rounded-full bg-opacity-10 absolute"
-          style={{ backgroundColor: '#0da889', bottom: '10%', left: '25%' }}
+          style={{ backgroundColor: '#FF4D6D', bottom: '10%', left: '25%' }}
           animate={{
             x: [0, 30, 0],
             scale: [1, 1.1, 1],
@@ -86,7 +86,7 @@ const Footer = () => {
         <svg className="absolute inset-0 w-full h-full">
           <motion.path
             d="M0,100 C150,50 250,150 400,100 C550,50 650,150 800,100"
-            stroke="#0da889"
+            stroke="#0dcfcf"
             strokeWidth="2"
             strokeLinecap="round"
             strokeOpacity="0.3"
@@ -97,7 +97,7 @@ const Footer = () => {
           />
           <motion.path
             d="M0,200 C150,250 250,150 400,200 C550,250 650,150 800,200"
-            stroke="#0eaa8d"
+            stroke="#0fa2b2"
             strokeWidth="2"
             strokeLinecap="round"
             strokeOpacity="0.3"
@@ -109,7 +109,7 @@ const Footer = () => {
           />
           <motion.path
             d="M0,300 C100,350 300,250 500,300 C700,350 800,250 900,300"
-            stroke="#0da889"
+            stroke="#FF4D6D"
             strokeWidth="2"
             strokeLinecap="round"
             strokeOpacity="0.3"
@@ -121,7 +121,7 @@ const Footer = () => {
           />
           <motion.path
             d="M100,350 C200,300 300,400 400,350 C500,300 600,400 700,350"
-            stroke="#0eaa8d"
+            stroke="#0dcfcf"
             strokeWidth="2"
             strokeLinecap="round"
             strokeOpacity="0.3"
@@ -167,22 +167,22 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">About Us</h3>
             <ul className="space-y-3">
               <li className="flex items-start text-gray-400">
-                <Info size={16} className="mt-1 mr-2 flex-shrink-0" style={{ color: '#0eaa8d' }} />
+                <Info size={16} className="mt-1 mr-2 flex-shrink-0" style={{ color: '#0dcfcf' }} />
                 <span className="text-sm">Founded in 2018 with a mission to make fitness accessible to everyone</span>
               </li>
               <li className="flex items-start text-gray-400">
-                <Heart size={16} className="mt-1 mr-2 flex-shrink-0" style={{ color: '#0eaa8d' }} />
+                <Heart size={16} className="mt-1 mr-2 flex-shrink-0" style={{ color: '#FF4D6D' }} />
                 <span className="text-sm">Committed to improving the health and wellbeing of our community</span>
               </li>
               <li className="flex items-start text-gray-400">
-                <Award size={16} className="mt-1 mr-2 flex-shrink-0" style={{ color: '#0eaa8d' }} />
+                <Award size={16} className="mt-1 mr-2 flex-shrink-0" style={{ color: '#0fa2b2' }} />
                 <span className="text-sm">Award-winning fitness programs designed by certified experts</span>
               </li>
               <li>
                 <motion.a 
                   href="#"
                   className="text-sm inline-block mt-3 text-white"
-                  style={{ color: '#0eaa8d' }}
+                  style={{ color: '#0dcfcf' }}
                   whileHover={{ x: 5 }}
                 >
                   Learn more about our story →
@@ -209,32 +209,32 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <ul className="space-y-2">
               <li className="flex items-center text-gray-400">
-                <Phone size={16} className="mr-2" />
+                <Phone size={16} className="mr-2" style={{ color: '#0dcfcf' }} />
                 <span>(123) 456-7890</span>
               </li>
               <li className="flex items-center text-gray-400">
-                <Mail size={16} className="mr-2" />
+                <Mail size={16} className="mr-2" style={{ color: '#0dcfcf' }} />
                 <span>info@fitbuddy.com</span>
               </li>
               <li className="flex items-center text-gray-400">
-                <MapPin size={16} className="mr-2" />
+                <MapPin size={16} className="mr-2" style={{ color: '#0dcfcf' }} />
                 <span>123 Fitness Street, Workout City</span>
               </li>
               <li className="flex items-center text-gray-400 mt-4">
-                <Clock size={16} className="mr-2" />
+                <Clock size={16} className="mr-2" style={{ color: '#0dcfcf' }} />
                 <span>Monday-Friday: 8am-8pm<br />Weekends: 9am-6pm</span>
               </li>
             </ul>
           </motion.div>
         </motion.div>
 
-        {/* Simple copyright footer */}
+        {/* Simple copyright footer with updated colors */}
         <div className="text-sm text-gray-400 text-center mt-12 pt-6 border-t border-gray-800">
           © {new Date().getFullYear()} FitBuddy. All rights reserved. 
           <span className="mx-2">•</span>
-          <a href="#" className="hover:text-white">Privacy</a>
+          <a href="#" className="hover:text-white" style={{ color: '#0dcfcf' }}>Privacy</a>
           <span className="mx-2">•</span>
-          <a href="#" className="hover:text-white">Terms</a>
+          <a href="#" className="hover:text-white" style={{ color: '#0dcfcf' }}>Terms</a>
         </div>
       </div>
     </footer>

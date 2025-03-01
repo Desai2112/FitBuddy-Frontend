@@ -43,9 +43,6 @@ const Login = () => {
     });
   };
 
-
-
-  // Then modify the handleSubmit function
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -57,11 +54,13 @@ const Login = () => {
         email: formData.email,
         password: formData.password,
       });
+      console.log("login")
+      console.log(response.data.role)
 
       if (response.data.success) {
         // Redirect to appropriate dashboard based on user role
-        if (response.data.user.role === 'user') {
-          navigate('/');
+        if (response.data) {
+          navigate('/dashboard');
         } else {
           navigate('/doctor-dashboard');
         }
@@ -82,7 +81,7 @@ const Login = () => {
       <div className="absolute inset-0 z-0">
         <motion.div
           className="absolute top-20 left-20 w-48 h-48 rounded-full opacity-30"
-          style={{ background: 'linear-gradient(135deg, #0eab8f 0%, #0ba380 100%)' }}
+          style={{ background: 'linear-gradient(135deg, #0dcfcf 0%, #0fa2b2 100%)' }}
           animate={{
             scale: [1, 1.2, 1],
             transition: { duration: 8, repeat: Infinity, ease: "easeInOut" }
@@ -90,7 +89,7 @@ const Login = () => {
         />
         <motion.div
           className="absolute bottom-16 left-40 w-64 h-64 rounded-full opacity-20"
-          style={{ background: 'linear-gradient(135deg, #0ba380 0%, #0eab8f 100%)' }}
+          style={{ background: 'linear-gradient(135deg, #0fa2b2 0%, #0dcfcf 100%)' }}
           animate={{
             scale: [1.2, 1, 1.2],
             transition: { duration: 7, repeat: Infinity, ease: "easeInOut" }
@@ -106,7 +105,7 @@ const Login = () => {
 
         {/* Dotted pattern */}
         <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle, #0ba380 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(circle, #0fa2b2 1px, transparent 1px)',
           backgroundSize: '30px 30px',
           opacity: 0.05
         }} />
@@ -120,9 +119,9 @@ const Login = () => {
       >
         <motion.div className="flex justify-center mb-6" variants={itemVariants}>
           <div className="text-3xl flex items-center gap-2 font-bold uppercase">
-            <FaDumbbell style={{ color: '#0eab8f' }} />
+            <FaDumbbell style={{ color: '#0dcfcf' }} />
             <p>FIT</p>
-            <p style={{ color: '#0eab8f' }}>BUDDY</p>
+            <p style={{ color: '#0dcfcf' }}>BUDDY</p>
           </div>
         </motion.div>
 
@@ -132,7 +131,7 @@ const Login = () => {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Don't have an account?{' '}
-            <Link to="/signup" className="font-semibold" style={{ color: '#0eab8f' }}>
+            <Link to="/signup" className="font-semibold" style={{ color: '#0fa2b2' }}>
               Sign up for free
             </Link>
           </p>
@@ -164,8 +163,8 @@ const Login = () => {
                 required
                 className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent"
                 style={{
-                  focusRing: '#0eab8f',
-                  '--tw-ring-color': 'rgba(14, 171, 143, 0.5)'
+                  focusRing: '#0dcfcf',
+                  '--tw-ring-color': 'rgba(13, 207, 207, 0.5)'
                 }}
                 placeholder="Enter your email"
                 value={formData.email}
@@ -184,8 +183,8 @@ const Login = () => {
                 required
                 className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent"
                 style={{
-                  focusRing: '#0eab8f',
-                  '--tw-ring-color': 'rgba(14, 171, 143, 0.5)'
+                  focusRing: '#0dcfcf',
+                  '--tw-ring-color': 'rgba(13, 207, 207, 0.5)'
                 }}
                 placeholder="Enter your password"
                 value={formData.password}
@@ -204,7 +203,7 @@ const Login = () => {
                 name="rememberMe"
                 type="checkbox"
                 className="h-4 w-4 border-gray-300 rounded"
-                style={{ color: '#0eab8f' }}
+                style={{ color: '#0dcfcf' }}
                 checked={formData.rememberMe}
                 onChange={handleChange}
               />
@@ -214,7 +213,7 @@ const Login = () => {
             </div>
 
             <div className="text-sm">
-              <a href="#" className="font-medium hover:text-opacity-80" style={{ color: '#0eab8f' }}>
+              <a href="#" className="font-medium hover:text-opacity-80" style={{ color: '#0fa2b2' }}>
                 Forgot password?
               </a>
             </div>
@@ -225,7 +224,7 @@ const Login = () => {
               type="submit"
               disabled={loading}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white transition-all duration-300 relative overflow-hidden"
-              style={{ background: 'linear-gradient(135deg, #0eab8f 0%, #0ba380 100%)' }}
+              style={{ background: 'linear-gradient(135deg, #0dcfcf 0%, #0fa2b2 100%)' }}
             >
               <motion.span
                 className="absolute inset-0 z-0"
@@ -249,11 +248,11 @@ const Login = () => {
             variants={itemVariants}
           >
             By continuing, you agree to FitBuddy's{' '}
-            <a href="#" className="font-medium" style={{ color: '#0eab8f' }}>
+            <a href="#" className="font-medium" style={{ color: '#0fa2b2' }}>
               Terms of Service
             </a>{' '}
             and{' '}
-            <a href="#" className="font-medium" style={{ color: '#0eab8f' }}>
+            <a href="#" className="font-medium" style={{ color: '#0fa2b2' }}>
               Privacy Policy
             </a>
           </motion.div>

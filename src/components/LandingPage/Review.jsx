@@ -211,7 +211,7 @@ const Review = () => {
             Success Stories
           </motion.h2>
           <motion.div 
-            className="w-16 h-1 bg-green-500 mx-auto mb-6"
+            className="w-16 h-1 bg-[#0dcfcf] mx-auto mb-6"
             variants={itemVariants}
           />
           <motion.p 
@@ -278,12 +278,12 @@ const Review = () => {
                         <Star 
                           key={i} 
                           size={16} 
-                          className={i < reviews[currentIndex].rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"} 
+                          className={i < reviews[currentIndex].rating ? "fill-[#FF4D6D] text-[#FF4D6D]" : "text-gray-300"} 
                         />
                       ))}
                     </motion.div>
                     <motion.span 
-                      className="text-xs text-center text-gray-700 font-medium px-3 py-1 bg-gray-100 rounded-full"
+                      className="text-xs text-center text-[#0fa2b2] font-medium px-3 py-1 bg-[#f5f5f5] rounded-full"
                       initial={{ y: 10, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.6 }}
@@ -299,7 +299,7 @@ const Review = () => {
                       animate={{ opacity: 0.2, scale: 1 }}
                       transition={{ delay: 0.3 }}
                     >
-                      <Quote className="text-gray-200 w-12 h-12 mb-4" />
+                      <Quote className="text-[#0dcfcf] w-12 h-12 mb-4 opacity-30" />
                     </motion.div>
                     <motion.p 
                       className="text-gray-700 mb-6 italic leading-relaxed"
@@ -317,7 +317,7 @@ const Review = () => {
                           key={index}
                           onClick={() => handleDotClick(index)}
                           className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                            index === currentIndex ? "bg-green-500" : "bg-gray-300"
+                            index === currentIndex ? "bg-[#0dcfcf]" : "bg-gray-300"
                           }`}
                           aria-label={`Go to review ${index + 1}`}
                         />
@@ -332,7 +332,7 @@ const Review = () => {
           {/* Navigation buttons */}
           <motion.button
             onClick={handlePrev}
-            className="absolute top-1/2 -left-4 md:-left-6 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-50 z-10"
+            className="absolute top-1/2 -left-4 md:-left-6 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-[#0fa2b2] hover:bg-[#f5f5f5] z-10"
             whileHover={{ scale: 1.1, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
             whileTap={{ scale: 0.9 }}
           >
@@ -341,7 +341,7 @@ const Review = () => {
           
           <motion.button
             onClick={handleNext}
-            className="absolute top-1/2 -right-4 md:-right-6 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-50 z-10"
+            className="absolute top-1/2 -right-4 md:-right-6 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-[#0fa2b2] hover:bg-[#f5f5f5] z-10"
             whileHover={{ scale: 1.1, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
             whileTap={{ scale: 0.9 }}
           >
@@ -359,7 +359,7 @@ const Review = () => {
         >
           <h3 className="text-xl font-bold text-gray-800 mb-4">Ready to Start Your Fitness Journey?</h3>
           <motion.button
-            className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-600 text-white font-medium rounded-full shadow-md hover:shadow-lg"
+            className="px-6 py-3 bg-gradient-to-r from-[#0dcfcf] to-[#0fa2b2] text-white font-medium rounded-full shadow-md hover:shadow-lg"
             whileHover={{ 
               scale: 1.05, 
               boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
