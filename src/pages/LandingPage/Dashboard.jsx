@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AuthenticatedNavbar from "../../components/LandingPage/AuthenticatedNavbar";
 import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
@@ -12,6 +12,25 @@ import Footer from "../../components/LandingPage/Footer";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  // Add useEffect for Botpress Webchat
+  useEffect(() => {
+    // Inject Botpress Webchat script
+    const script1 = document.createElement("script");
+    script1.src = "https://cdn.botpress.cloud/webchat/v2.3/inject.js";
+    script1.async = true;
+    document.body.appendChild(script1);
+
+    const script2 = document.createElement("script");
+    script2.src = "https://files.bpcontent.cloud/2025/02/28/17/20250228172257-TI42XNQY.js";
+    script2.async = true;
+    document.body.appendChild(script2);
+
+    return () => {
+      document.body.removeChild(script1);
+      document.body.removeChild(script2);
+    };
+  }, []);
 
   const features = [
     {
@@ -106,16 +125,16 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       <AuthenticatedNavbar />
-      
+
       {/* Enhanced Hero Section with Amazing Animations */}
       <section className="relative min-h-[30vh] bg-gradient-to-br from-[#0dcfcf] via-[#0fa2b2] to-[#0dcfcf] overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
           {/* Animated 3D Grid */}
           <div className="absolute inset-0 perspective-1000">
-            <motion.div 
+            <motion.div
               className="absolute inset-0"
-              style={{ 
+              style={{
                 backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)',
                 backgroundSize: '50px 50px',
                 transformStyle: 'preserve-3d'
@@ -125,8 +144,8 @@ const Dashboard = () => {
                 rotateY: [0, 15, 0],
                 scale: [1, 1.05, 1],
               }}
-              transition={{ 
-                duration: 20, 
+              transition={{
+                duration: 20,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
@@ -167,9 +186,8 @@ const Dashboard = () => {
               style={{
                 width: `${Math.random() * 400 + 200}px`,
                 height: `${Math.random() * 400 + 200}px`,
-                background: `radial-gradient(circle, ${
-                  i % 3 === 0 ? '#0dcfcf' : i % 3 === 1 ? '#0fa2b2' : '#FF4D6D'
-                } 0%, transparent 70%)`,
+                background: `radial-gradient(circle, ${i % 3 === 0 ? '#0dcfcf' : i % 3 === 1 ? '#0fa2b2' : '#FF4D6D'
+                  } 0%, transparent 70%)`,
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
                 opacity: 0.2
@@ -198,12 +216,12 @@ const Dashboard = () => {
                 strokeWidth="2"
                 fill="none"
                 initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ 
+                animate={{
                   pathLength: [0, 1],
                   opacity: [0, 0.5, 0],
                   y: [0, -20, 0]
                 }}
-                transition={{ 
+                transition={{
                   duration: 5 + i,
                   repeat: Infinity,
                   ease: "easeInOut"
@@ -223,14 +241,14 @@ const Dashboard = () => {
             <motion.div
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ 
+              transition={{
                 duration: 0.8,
                 type: "spring",
                 stiffness: 100
               }}
               className="mb-8 inline-block perspective-1000"
             >
-              <motion.div 
+              <motion.div
                 className="w-32 h-32 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center mx-auto mb-6 relative"
                 animate={{
                   rotateY: [0, 360],
@@ -266,7 +284,7 @@ const Dashboard = () => {
               </motion.div>
             </motion.div>
 
-            <motion.h1 
+            <motion.h1
               className="text-7xl font-bold mb-6 relative"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -283,7 +301,7 @@ const Dashboard = () => {
               </span>
             </motion.h1>
 
-            <motion.p 
+            <motion.p
               className="text-2xl mb-12 text-white/90"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -292,15 +310,15 @@ const Dashboard = () => {
               Experience comprehensive healthcare with AI-powered guidance,
               <br />personalized plans, and expert support.
             </motion.p>
-            
-            <motion.div 
+
+            <motion.div
               className="flex gap-8 justify-center"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7 }}
             >
               <motion.button
-                whileHover={{ 
+                whileHover={{
                   scale: 1.05,
                   boxShadow: "0 0 30px rgba(255,255,255,0.4)"
                 }}
@@ -313,7 +331,7 @@ const Dashboard = () => {
                 />
               </motion.button>
               <motion.button
-                whileHover={{ 
+                whileHover={{
                   scale: 1.05,
                   boxShadow: "0 0 30px rgba(255,255,255,0.3)"
                 }}
@@ -335,7 +353,7 @@ const Dashboard = () => {
         {/* Enhanced Background Animations */}
         <div className="absolute inset-0">
           {/* Animated Grid */}
-          <motion.div 
+          <motion.div
             className="absolute inset-0"
             style={{
               backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(13,207,207,0.1) 1px, transparent 1px)',
@@ -391,7 +409,7 @@ const Dashboard = () => {
                 transition={{ duration: 3 + i, repeat: Infinity }}
               />
             ))}
-                  </svg>
+          </svg>
 
           {/* Particle Effect */}
           {[...Array(20)].map((_, i) => (
@@ -415,11 +433,11 @@ const Dashboard = () => {
               }}
             />
           ))}
-            </div>
+        </div>
 
         {/* Content */}
         <div className="container mx-auto text-center mb-12 relative z-10">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -435,7 +453,7 @@ const Dashboard = () => {
           >
             Transform your wellness journey with our powerful features
           </motion.p>
-            </div>
+        </div>
 
         <div className="relative w-full h-[450px] overflow-hidden">
           {/* Main curved path */}
@@ -457,7 +475,7 @@ const Dashboard = () => {
                 <stop offset="100%" stopColor="#FF4D6D" />
               </linearGradient>
             </defs>
-                  </svg>
+          </svg>
 
           {/* Feature icons along the curve */}
           {features.map((feature, index) => {
@@ -469,8 +487,8 @@ const Dashboard = () => {
               <motion.div
                 key={feature.id}
                 className="absolute"
-                style={{ 
-                  left: `${x}px`, 
+                style={{
+                  left: `${x}px`,
                   top: `${y}px`,
                   transform: 'translate(-50%, -50%)'
                 }}
@@ -480,19 +498,19 @@ const Dashboard = () => {
                 transition={{ delay: 0.5 + index * 0.2 }}
                 whileHover={{ scale: 1.1 }}
               >
-                <div 
+                <div
                   className="relative group cursor-pointer"
                   onClick={() => navigate(feature.link)}
                 >
                   {/* Feature icon circle */}
-                  <div 
+                  <div
                     className="w-20 h-20 rounded-full bg-white shadow-lg flex items-center justify-center relative z-10"
                     style={{ color: feature.color }}
                   >
                     {feature.icon}
                     <motion.div
                       className="absolute inset-0 rounded-full"
-                      style={{ 
+                      style={{
                         background: `linear-gradient(135deg, ${feature.color}22, ${feature.color}11)`,
                         border: `2px solid ${feature.color}33`
                       }}
@@ -510,7 +528,7 @@ const Dashboard = () => {
 
                   {/* Tooltip */}
                   <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white p-4 rounded-xl shadow-xl -translate-x-1/2 left-1/2 min-w-[200px] z-20"
-                    style={{ 
+                    style={{
                       top: index % 2 === 0 ? '120%' : '-120%',
                       border: `2px solid ${feature.color}22`
                     }}
@@ -519,7 +537,7 @@ const Dashboard = () => {
                       {feature.title}
                     </h3>
                     <p className="text-sm text-gray-600">{feature.description}</p>
-              </div>
+                  </div>
                 </div>
               </motion.div>
             );
@@ -552,7 +570,7 @@ const Dashboard = () => {
               Try Now
             </motion.button>
           </motion.div>
-              </div>
+        </div>
       </section>
 
       {/* Lighter Community Section */}
@@ -594,8 +612,8 @@ const Dashboard = () => {
                 ease: "easeInOut"
               }}
             />
-                ))}
-              </div>
+          ))}
+        </div>
 
         {/* Rest of community section content */}
         <div className="container mx-auto px-6 relative z-10">
@@ -603,16 +621,16 @@ const Dashboard = () => {
             <motion.div className="text-[#2a5757]"> {/* Darker text for better contrast */}
               <h2 className="text-4xl font-bold mb-6">Join Our Fitness Community</h2>
               <p className="text-xl mb-8">Connect with fitness enthusiasts, share your journey, and get inspired by success stories.</p>
-              
+
               <div className="grid grid-cols-2 gap-6 mb-8">
                 <div className="bg-white bg-opacity-10 p-4 rounded-lg backdrop-blur-sm">
                   <h3 className="text-2xl font-bold mb-2">10K+</h3>
                   <p className="text-sm">Active Members</p>
-            </div>
+                </div>
                 <div className="bg-white bg-opacity-10 p-4 rounded-lg backdrop-blur-sm">
                   <h3 className="text-2xl font-bold mb-2">5K+</h3>
                   <p className="text-sm">Success Stories</p>
-          </div>
+                </div>
                 <div className="bg-white bg-opacity-10 p-4 rounded-lg backdrop-blur-sm">
                   <h3 className="text-2xl font-bold mb-2">500+</h3>
                   <p className="text-sm">Expert Trainers</p>
@@ -648,12 +666,12 @@ const Dashboard = () => {
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-full bg-[#0dcfcf] flex items-center justify-center text-white">
                     <FaVideo className="text-xl" />
-              </div>
+                  </div>
                   <div className="ml-4">
                     <h4 className="font-bold text-gray-800">Live Sessions</h4>
                     <p className="text-sm text-gray-600">Join daily workouts</p>
-                      </div>
-                    </div>
+                  </div>
+                </div>
               </motion.div>
 
               <motion.div
@@ -668,8 +686,8 @@ const Dashboard = () => {
                   <div className="ml-4">
                     <h4 className="font-bold text-gray-800">Community Posts</h4>
                     <p className="text-sm text-gray-600">Share your progress</p>
-              </div>
-            </div>
+                  </div>
+                </div>
               </motion.div>
 
               <motion.div
@@ -684,15 +702,19 @@ const Dashboard = () => {
                   <div className="ml-4">
                     <h4 className="font-bold text-gray-800">Fitness Challenges</h4>
                     <p className="text-sm text-gray-600">Weekly competitions</p>
-              </div>
-            </div>
+                  </div>
+                </div>
               </motion.div>
             </motion.div>
           </div>
         </div>
       </section>
-        
+
       <Footer />
+      {/* Add the Help Desk webchat container */}
+      <div className="fixed bottom-4 right-4 flex items-center justify-center z-50">
+        <div id="webchat" className="rounded-lg shadow-lg w-80 h-96" />
+      </div>
     </div>
   );
 };
