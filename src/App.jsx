@@ -9,6 +9,8 @@ import ProfilePage from './pages/LandingPage/ProfilePage';
 import BMICalculator from './components/LandingPage/BMICalculator';
 import DoctorAppointment from './pages/LandingPage/DoctorAppointment';
 import PdfViewer from './pages/LandingPage/PdfViewer';
+import MealPlanning from './pages/LandingPage/MealPlanning';
+import UserHistoryPage from './pages/LandingPage/UserHistoryPage';
 
 function App() {
   return (
@@ -23,6 +25,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/bmi-calculator" element={<BMICalculator />} />
         <Route path="/consultation" element={<DoctorAppointment />} />
+        <Route path="/user/history/:userId" element={<UserHistoryPage/>}/>
       </Routes>
     </Router>
   );

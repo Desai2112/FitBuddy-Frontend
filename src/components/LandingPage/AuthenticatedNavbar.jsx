@@ -5,7 +5,7 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 import ResponsiveMenu from "./ResponsiveMenu";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../../api/axios"; // Use your configured axios instance
 import { GiWeightLiftingUp } from "react-icons/gi";
 import { AiFillHome } from "react-icons/ai";
@@ -28,6 +28,7 @@ const AuthenticatedNavbar = ({ user }) => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const [scrolled, setScrolled] = React.useState(false);
+  const location = useLocation();
   
   // Updated menu list
   const menuItems = [
@@ -125,27 +126,40 @@ const AuthenticatedNavbar = ({ user }) => {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-8">
-              {dashboardMenu.map((item) => (
-                <motion.div
-                  key={item.id}
-                  onClick={() => navigate(item.link)}
-                  className={`relative group flex items-center gap-2 text-base font-medium cursor-pointer ${
-                    scrolled ? "text-gray-700" : "text-gray-800"
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <span className={`text-xl ${
-                    scrolled ? "text-[#0fa2b2]" : "text-[#0dcfcf]"
-                  }`}>
-                    {item.icon}
-                  </span>
-                  {item.title}
+              {dashboardMenu.map((item) => {
+                const isActive = location.pathname === item.link;
+                return (
                   <motion.div
-                    className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-[#0dcfcf] to-[#0fa2b2] group-hover:w-full"
-                    transition={{ duration: 0.3 }}
-                  />
-                </motion.div>
-              ))}
+                    key={item.id}
+                    onClick={() => navigate(item.link)}
+                    className={`relative group flex items-center gap-2 text-base font-medium cursor-pointer ${
+                      scrolled ? "text-gray-700" : "text-gray-800"
+                    } ${isActive ? 'text-[#0dcfcf]' : ''}`}
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <span className={`text-xl ${
+                      isActive 
+                        ? "text-[#0dcfcf]" 
+                        : scrolled 
+                          ? "text-[#0fa2b2]" 
+                          : "text-[#0dcfcf]"
+                    }`}>
+                      {item.icon}
+                    </span>
+                    {item.title}
+                    {isActive && (
+                      <motion.div
+                        className="absolute -bottom-1 left-0 w-full h-0.5 bg-[#0dcfcf]"
+                        layoutId="activeTab"
+                      />
+                    )}
+                    <motion.div
+                      className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-[#0dcfcf] to-[#0fa2b2] group-hover:w-full"
+                      transition={{ duration: 0.3 }}
+                    />
+                  </motion.div>
+                );
+              })}
             </div>
 
             {/* User Profile */}

@@ -1,14 +1,74 @@
-import React, { useState } from 'react';
-import { User, Video, Phone } from "lucide-react";
-import { PlusCircle, XCircle } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { User, Video, Phone, PlusCircle, XCircle, Calendar } from "lucide-react";
+import AuthenticatedNavbar from "../../components/LandingPage/AuthenticatedNavbar";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const DoctorAppointment = () => {
+  const navigate = useNavigate();
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [selectedDate, setSelectedDate] = useState('19');
-  const [selectedTime, setSelectedTime] = useState('11:30 AM');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
   const [symptoms, setSymptoms] = useState([]);
   const [symptomInput, setSymptomInput] = useState('');
-  const [appointmentMode, setAppointmentMode] = useState('');
+  const [appointmentMode, setAppointmentMode] = useState('in-person');
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [calendarDays, setCalendarDays] = useState([]);
+
+  // Function to generate calendar days
+  const generateCalendarDays = () => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDay = firstDay.getDay();
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const days = [];
+    
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < startingDay; i++) {
+      days.push({ day: '', available: false });
+    }
+    
+    // Add the days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const isAvailable = date >= today;
+      days.push({
+        day: day,
+        available: isAvailable,
+        date: date
+      });
+    }
+    
+    setCalendarDays(days);
+  };
+
+  // Generate calendar days when month changes
+  useEffect(() => {
+    generateCalendarDays();
+  }, [currentMonth]);
+
+  const handlePrevMonth = () => {
+    const newDate = new Date(currentMonth);
+    newDate.setMonth(newDate.getMonth() - 1);
+    setCurrentMonth(newDate);
+  };
+
+  const handleNextMonth = () => {
+    const newDate = new Date(currentMonth);
+    newDate.setMonth(newDate.getMonth() + 1);
+    setCurrentMonth(newDate);
+  };
+
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
 
   const handleDoctorSelect = (index) => {
     setSelectedDoctor(index);
@@ -40,25 +100,10 @@ const DoctorAppointment = () => {
   };
 
   return (
-    <>
-      <header>
-        <div className="container">
-          <nav>
-          <div className="logo">
-  <span className="logo-icon">⚕️</span> MedConnect
-</div>
-            <ul className="nav-links">
-              <li><a href="#">Services</a></li>
-              <li><a href="#">Doctors</a></li>
-              <li><a href="#">Locations</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Contact</a></li>
-            </ul>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50">
+      <AuthenticatedNavbar />
       
-      <main className="container">
+      <main className="container mx-auto px-4 py-8 mt-20">
         <h1>Book Your Appointment</h1>
         
         <div className="benefits">
@@ -81,8 +126,8 @@ const DoctorAppointment = () => {
           </div>
         </div>
         
-        <div className="booking-container">
-          <div className="booking-form">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-white p-6 rounded-xl shadow-md">
             <h2 className="section-title">Patient Information</h2>
             <form>
               <div className="form-group">
@@ -117,69 +162,66 @@ const DoctorAppointment = () => {
               </div>
 
               <div className="form-group">
-      <label>Mode of Appointment</label>
-      <div className="mode-selector flex gap-4">
-        <div 
-          className={`mode-option flex items-center gap-2 p-3 rounded-lg cursor-pointer ${appointmentMode === 'in-person' ? 'bg-blue-100' : 'bg-gray-100'}`} 
-          onClick={() => handleAppointmentModeChange('in-person')}
-        >
-          <User className="w-6 h-6 text-blue-500" />
-          <span>In-Person</span>
-        </div>
-        <div 
-          className={`mode-option flex items-center gap-2 p-3 rounded-lg cursor-pointer ${appointmentMode === 'video' ? 'bg-blue-100' : 'bg-gray-100'}`} 
-          onClick={() => handleAppointmentModeChange('video')}
-        >
-          <Video className="w-6 h-6 text-blue-500" />
-          <span>Video</span>
-        </div>
-        <div 
-          className={`mode-option flex items-center gap-2 p-3 rounded-lg cursor-pointer ${appointmentMode === 'phone' ? 'bg-blue-100' : 'bg-gray-100'}`} 
-          onClick={() => handleAppointmentModeChange('phone')}
-        >
-          <Phone className="w-6 h-6 text-blue-500" />
-          <span>Phone</span>
-        </div>
-      </div>
-    </div>
+                <label>Mode of Appointment</label>
+                <div className="mode-selector flex gap-4">
+                  <div 
+                    className={`mode-option flex items-center gap-2 p-3 rounded-lg cursor-pointer ${appointmentMode === 'in-person' ? 'bg-blue-100' : 'bg-gray-100'}`} 
+                    onClick={() => handleAppointmentModeChange('in-person')}
+                  >
+                    <User className="w-6 h-6 text-blue-500" />
+                    <span>In-Person</span>
+                  </div>
+                  <div 
+                    className={`mode-option flex items-center gap-2 p-3 rounded-lg cursor-pointer ${appointmentMode === 'video' ? 'bg-blue-100' : 'bg-gray-100'}`} 
+                    onClick={() => handleAppointmentModeChange('video')}
+                  >
+                    <Video className="w-6 h-6 text-blue-500" />
+                    <span>Video</span>
+                  </div>
+                  <div 
+                    className={`mode-option flex items-center gap-2 p-3 rounded-lg cursor-pointer ${appointmentMode === 'phone' ? 'bg-blue-100' : 'bg-gray-100'}`} 
+                    onClick={() => handleAppointmentModeChange('phone')}
+                  >
+                    <Phone className="w-6 h-6 text-blue-500" />
+                    <span>Phone</span>
+                  </div>
+                </div>
+              </div>
               
-                  
+              <div className="form-group">
+                <label>Symptoms</label>
+                <div className="symptoms-container flex gap-2">
+                  <input
+                    type="text"
+                    id="symptom-input"
+                    placeholder="Enter symptom"
+                    value={symptomInput}
+                    onChange={(e) => setSymptomInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && handleAddSymptom()}
+                    className="border rounded-lg px-3 py-2 w-full"
+                  />
+                  <button type="button" className="btn-small flex items-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-lg" onClick={handleAddSymptom}>
+                    <PlusCircle className="w-5 h-5" /> Add
+                  </button>
+                </div>
 
-    <div className="form-group">
-      <label>Symptoms</label>
-      <div className="symptoms-container flex gap-2">
-        <input
-          type="text"
-          id="symptom-input"
-          placeholder="Enter symptom"
-          value={symptomInput}
-          onChange={(e) => setSymptomInput(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleAddSymptom()}
-          className="border rounded-lg px-3 py-2 w-full"
-        />
-        <button type="button" className="btn-small flex items-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-lg" onClick={handleAddSymptom}>
-          <PlusCircle className="w-5 h-5" /> Add
-        </button>
-      </div>
-
-      <div className="symptoms-list flex flex-wrap gap-2 mt-3">
-        {symptoms.map((symptom, index) => (
-          <div key={index} className="symptom-tag flex items-center gap-2 bg-gray-200 px-3 py-1 rounded-lg">
-            {symptom}
-            <button type="button" className="remove-btn text-red-500" onClick={() => handleRemoveSymptom(index)}>
-              <XCircle className="w-5 h-5" />
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
+                <div className="symptoms-list flex flex-wrap gap-2 mt-3">
+                  {symptoms.map((symptom, index) => (
+                    <div key={index} className="symptom-tag flex items-center gap-2 bg-gray-200 px-3 py-1 rounded-lg">
+                      {symptom}
+                      <button type="button" className="remove-btn text-red-500" onClick={() => handleRemoveSymptom(index)}>
+                        <XCircle className="w-5 h-5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               <div className="form-group">
                 <label htmlFor="reason">Reason for Visit</label>
                 <textarea id="reason" placeholder="Briefly describe your reason for visiting..." required></textarea>
               </div>
             </form>
-
 
             <div className="doctors-section">
               <h2 className="section-title">Select Doctor</h2>
@@ -227,123 +269,135 @@ const DoctorAppointment = () => {
             </div>
           </div>
           
-          <div className="calendar-section">
-            <h2 className="section-title">Select Date & Time</h2>
-            <div className="calendar">
-              <div className="month-selector">
-                <button className="arrow-btn">&#8249;</button>
-                <div className="month-title">March 2025</div>
-                <button className="arrow-btn">&#8250;</button>
+          <div className="space-y-8">
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <h2 className="text-xl font-semibold text-cyan-700 mb-6 pb-2 border-b-2 border-cyan-500">
+                Select Date & Time
+              </h2>
+
+              <div className="calendar mb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <button 
+                    onClick={handlePrevMonth}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors text-cyan-600"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <h3 className="text-lg font-semibold text-gray-700">
+                    {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+                  </h3>
+                  <button 
+                    onClick={handleNextMonth}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors text-cyan-600"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-7 gap-2 mb-2">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                    <div key={day} className="text-center text-sm font-medium text-gray-600 py-2">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-7 gap-2">
+                  {calendarDays.map((day, index) => (
+                    <motion.div
+                      key={index}
+                      whileHover={day.available ? { scale: 1.1 } : {}}
+                      whileTap={day.available ? { scale: 0.95 } : {}}
+                      className={`
+                        aspect-square flex items-center justify-center rounded-lg text-sm
+                        ${!day.day ? 'invisible' : ''}
+                        ${day.available 
+                          ? 'cursor-pointer hover:bg-cyan-50 border-2 ' + 
+                            (selectedDate === day.date.toISOString().split('T')[0]
+                              ? 'border-cyan-500 bg-cyan-50 text-cyan-600'
+                              : 'border-transparent hover:border-cyan-200')
+                          : 'text-gray-400 cursor-not-allowed bg-gray-50'}
+                      `}
+                      onClick={() => day.available && handleDateSelect(day.date.toISOString().split('T')[0])}
+                    >
+                      {day.day}
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-              
-              <div className="weekdays">
-                <div className="weekday">Sun</div>
-                <div className="weekday">Mon</div>
-                <div className="weekday">Tue</div>
-                <div className="weekday">Wed</div>
-                <div className="weekday">Thu</div>
-                <div className="weekday">Fri</div>
-                <div className="weekday">Sat</div>
-              </div>
-              
-              <div className="days">
-                <div className="day unavailable"></div>
-                <div className="day unavailable"></div>
-                <div className="day unavailable"></div>
-                <div className="day unavailable"></div>
-                <div className="day unavailable"></div>
-                <div className="day unavailable">1</div>
-                <div className="day unavailable">2</div>
-                <div className="day unavailable">3</div>
-                <div className="day unavailable">4</div>
-                <div className="day unavailable">5</div>
-                <div className="day unavailable">6</div>
-                <div className="day unavailable">7</div>
-                <div className="day available" onClick={() => handleDateSelect('8')}>8</div>
-                <div className="day unavailable">9</div>
-                <div className="day unavailable">10</div>
-                <div className="day unavailable">11</div>
-                <div className="day available" onClick={() => handleDateSelect('12')}>12</div>
-                <div className="day available" onClick={() => handleDateSelect('13')}>13</div>
-                <div className="day available" onClick={() => handleDateSelect('14')}>14</div>
-                <div className="day available" onClick={() => handleDateSelect('15')}>15</div>
-                <div className="day unavailable">16</div>
-                <div className="day unavailable">17</div>
-                <div className="day available" onClick={() => handleDateSelect('18')}>18</div>
-                <div 
-                  className={`day available ${selectedDate === '19' ? 'selected' : ''}`}
-                  onClick={() => handleDateSelect('19')}
-                >19</div>
-                <div className="day available" onClick={() => handleDateSelect('20')}>20</div>
-                <div className="day available" onClick={() => handleDateSelect('21')}>21</div>
-                <div className="day available" onClick={() => handleDateSelect('22')}>22</div>
-                <div className="day unavailable">23</div>
-                <div className="day unavailable">24</div>
-                <div className="day available" onClick={() => handleDateSelect('25')}>25</div>
-                <div className="day available" onClick={() => handleDateSelect('26')}>26</div>
-                <div className="day available" onClick={() => handleDateSelect('27')}>27</div>
-                <div className="day available" onClick={() => handleDateSelect('28')}>28</div>
-                <div className="day available" onClick={() => handleDateSelect('29')}>29</div>
-                <div className="day unavailable">30</div>
-                <div className="day unavailable">31</div>
+
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">Available Time Slots</h3>
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM',
+                    '11:00 AM', '11:30 AM', '2:00 PM', '2:30 PM',
+                    '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM'
+                  ].map((time) => (
+                    <motion.div
+                      key={time}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`
+                        p-2 text-center text-sm rounded-lg cursor-pointer transition-colors
+                        ${selectedTime === time
+                          ? 'bg-cyan-500 text-white'
+                          : 'border border-cyan-200 text-cyan-600 hover:bg-cyan-50'}
+                      `}
+                      onClick={() => handleTimeSelect(time)}
+                    >
+                      {time}
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </div>
-            
-            <div className="time-slots">
-              <h3 className="section-title">Available Time Slots</h3>
-              <div className="time-grid">
-                <div className="time-slot available" onClick={() => handleTimeSelect('9:00 AM')}>9:00 AM</div>
-                <div className="time-slot available" onClick={() => handleTimeSelect('9:30 AM')}>9:30 AM</div>
-                <div className="time-slot unavailable">10:00 AM</div>
-                <div className="time-slot unavailable">10:30 AM</div>
-                <div className="time-slot available" onClick={() => handleTimeSelect('11:00 AM')}>11:00 AM</div>
-                <div 
-                  className={`time-slot available ${selectedTime === '11:30 AM' ? 'selected' : ''}`}
-                  onClick={() => handleTimeSelect('11:30 AM')}
-                >11:30 AM</div>
-                <div className="time-slot unavailable">1:00 PM</div>
-                <div className="time-slot available" onClick={() => handleTimeSelect('1:30 PM')}>1:30 PM</div>
-                <div className="time-slot available" onClick={() => handleTimeSelect('2:00 PM')}>2:00 PM</div>
-                <div className="time-slot available" onClick={() => handleTimeSelect('2:30 PM')}>2:30 PM</div>
-                <div className="time-slot available" onClick={() => handleTimeSelect('3:00 PM')}>3:00 PM</div>
-                <div className="time-slot unavailable">3:30 PM</div>
-              </div>
-            </div>
-            
-            <div className="summary-section" style={{ display: 'block' }}>
-              <h3 className="section-title">Appointment Summary</h3>
-              <div className="summary-box">
-                <div className="summary-item">
-                  <span className="item-label">Date:</span>
-                  <span>March {selectedDate}, 2025</span>
-                </div>
-                <div className="summary-item">
-                  <span className="item-label">Time:</span>
-                  <span>{selectedTime}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="item-label">Doctor:</span>
-                  <span>
-                    {selectedDoctor === 0 && 'Dr. Sarah Johnson'}
-                    {selectedDoctor === 1 && 'Dr. Michael Chen'}
-                    {selectedDoctor === 2 && 'Dr. Lisa Rodriguez'}
-                    {selectedDoctor === 3 && 'Dr. James Wilson'}
-                    {selectedDoctor === null && 'Dr. Sarah Johnson'}
+
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <h2 className="text-xl font-semibold text-cyan-700 mb-6 pb-2 border-b-2 border-cyan-500">
+                Appointment Summary
+              </h2>
+              <div className="space-y-4 bg-cyan-50 p-4 rounded-lg">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Selected Date:</span>
+                  <span className="font-medium">
+                    {selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    }) : 'Not selected'}
                   </span>
                 </div>
-                <div className="summary-item">
-                  <span className="item-label">Appointment Type:</span>
-                  <span>New Patient Consultation</span>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Time:</span>
+                  <span className="font-medium">{selectedTime || 'Not selected'}</span>
                 </div>
-                <div className="summary-item">
-                  <span className="item-label">Location:</span>
-                  <span>MedConnect Main Clinic</span>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Doctor:</span>
+                  <span className="font-medium">
+                    {selectedDoctor !== null
+                      ? ['Dr. Sarah Johnson', 'Dr. Michael Chen', 'Dr. Lisa Rodriguez', 'Dr. James Wilson'][selectedDoctor]
+                      : 'Not selected'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Mode:</span>
+                  <span className="font-medium capitalize">{appointmentMode}</span>
                 </div>
               </div>
-              
-              <div className="confirmation-btns">
-                <button className="btn">Confirm Appointment</button>
-                <button className="btn btn-accent">Cancel</button>
+
+              <div className="mt-6 flex justify-end space-x-4">
+                <button className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                  Cancel
+                </button>
+                <button className="px-6 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors">
+                  Confirm Appointment
+                </button>
               </div>
             </div>
           </div>
@@ -903,7 +957,7 @@ const DoctorAppointment = () => {
           }
         }
       `}</style>
-    </>
+    </div>
   );
 };
 

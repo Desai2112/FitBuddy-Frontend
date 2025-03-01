@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { FaUser, FaPhone, FaMapMarkerAlt, FaHeartbeat, FaFileAlt, FaExclamationTriangle, FaEdit, FaSave, FaTimes } from "react-icons/fa";
+import { FaUser, FaPhone, FaMapMarkerAlt, FaHeartbeat, FaFileAlt, FaExclamationTriangle, FaEdit, FaSave, FaTimes, FaQrcode, FaDownload } from "react-icons/fa";
 import axios from "axios";
+import { QRCodeSVG } from 'qrcode.react';
 
 const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
-  const [data, setData]=useState(null);
+  const [data, setData] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [isQrHovered, setIsQrHovered] = useState(false);
 
   // Fetch profile data from the API
   useEffect(() => {
@@ -18,6 +21,7 @@ const ProfilePage = () => {
         });
         setProfile(response.data.data);
         setData(response.data.userData);
+        setUserId(response.data.userData?._id || "defaultUserId");
       } catch (error) {
         console.error("Error fetching profile data:", error);
         alert("Failed to load profile data");
@@ -40,6 +44,20 @@ const ProfilePage = () => {
   const toggleEditMode = () => {
     setEditMode(!editMode);
   };
+
+  const downloadQRCode = () => {
+    const canvas = document.getElementById("user-qr-code");
+    if (canvas) {
+      const url = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.download = `${data?.name || "user"}-qr-code.png`;
+      link.href = url;
+      link.click();
+    }
+  };
+
+  // Create the URL for user history
+  const userHistoryUrl = `http://localhost:5173/user/history/${userId}`;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -111,6 +129,62 @@ const ProfilePage = () => {
                     <p className="text-sm text-gray-500">BMI</p>
                     <p className="font-semibold text-lg">{profile?.healthInfo?.bmi || "N/A"}</p>
                   </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* QR Code Card */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <FaQrcode className="text-teal-500 mr-2" />
+                  <h2 className="text-lg font-semibold">User History QR</h2>
+                </div>
+              </div>
+              
+              <div className="flex flex-col items-center p-4">
+                <div 
+                  className="relative cursor-pointer transition-all duration-300"
+                  onMouseEnter={() => setIsQrHovered(true)}
+                  onMouseLeave={() => setIsQrHovered(false)}
+                >
+                  <QRCodeSVG
+                    id="user-qr-code"
+                    value={userHistoryUrl}
+                    size={150}
+                    level="H"
+                    includeMargin={true}
+                    className="mb-4"
+                  />
+                  
+                  {/* Hover Overlay */}
+                  {isQrHovered && (
+                    <div 
+                      className="absolute inset-0 bg-teal-500 bg-opacity-90 flex flex-col items-center justify-center text-white p-4 rounded transition-all"
+                      onClick={() => window.location.href = userHistoryUrl}
+                    >
+                      <p className="text-sm font-semibold mb-2">Click to visit:</p>
+                      <p className="text-xs text-center break-all">{userHistoryUrl}</p>
+                    </div>
+                  )}
+                </div>
+                
+                <p className="text-sm text-gray-500 text-center mb-4">
+                  Scan to view complete history
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={downloadQRCode}
+                    className="px-3 py-2 bg-teal-500 text-white text-sm rounded-md hover:bg-teal-600 transition flex items-center"
+                  >
+                    <FaDownload className="mr-2" /> Download
+                  </button>
+                  <button
+                    onClick={() => window.location.href = userHistoryUrl}
+                    className="px-3 py-2 bg-gray-200 text-gray-700 text-sm rounded-md hover:bg-gray-300 transition"
+                  >
+                    View History
+                  </button>
                 </div>
               </div>
             </div>
