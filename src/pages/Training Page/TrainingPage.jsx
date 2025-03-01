@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import {
   OrbitControls,
   useGLTF,
   useAnimations,
   Environment,
-  PresentationControls,
   Float,
-  Detailed,
   ContactShadows,
   useProgress,
   Html,
@@ -15,12 +13,36 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import PageWrapper from "./PageWrapper.jsx";
 import AuthenticatedNavbar from "../../components/LandingPage/AuthenticatedNavbar";
-import "./TrainingPage.css"
-// Import exercise data
-import exercises from "../../data/exercises.js";
+import "./TrainingPage.css";
+// Import enhanced exercise data
+import { exercises } from "../../data/exercises.js";
 
-// Model component with loading state
-const Model = ({ modelPath, isPlaying, animationProgress, setAnimationDuration }) => {
+// Preload models utility - will only load when needed
+const modelCache = {};
+
+const preloadModel = (path) => {
+  if (!modelCache[path]) {
+    modelCache[path] = new Promise((resolve) => {
+      useGLTF.preload(path);
+      // Small delay to ensure model is loaded
+      setTimeout(() => resolve(true), 100);
+    });
+  }
+  return modelCache[path];
+};
+
+// Loading screen component
+const LoadingScreen = ({ progress }) => (
+  <Html center>
+    <div className="loading">
+      <div className="spinner"></div>
+      <p>Loading model... {Math.round(progress)}%</p>
+    </div>
+  </Html>
+);
+
+// Lazily loaded Model component
+const Model = ({ modelPath, isPlaying, setAnimationDuration }) => {
   const { scene, animations } = useGLTF(modelPath);
   const { actions, mixer } = useAnimations(animations, scene);
   const animationAction = useRef(null);
@@ -64,7 +86,7 @@ const Model = ({ modelPath, isPlaying, animationProgress, setAnimationDuration }
     };
   }, [actions, mixer, setAnimationDuration]);
 
-  // Control animation progress manually
+  // Control animation play/pause
   useEffect(() => {
     if (animationAction.current && mixer) {
       const action = animationAction.current;
@@ -83,22 +105,18 @@ const Model = ({ modelPath, isPlaying, animationProgress, setAnimationDuration }
   }, [isPlaying, mixer]);
 
   if (progress < 100) {
-    return (
-      <Html center>
-        <div className="loading">
-          <div className="spinner"></div>
-          <p>Loading model... {Math.round(progress)}%</p>
-        </div>
-      </Html>
-    );
+    return <LoadingScreen progress={progress} />;
   }
 
   return (
     <>
-      <Float speed={0.3} rotationIntensity={0.1} floatIntensity={0.2} floatingRange={[0, 0.05]}>
-        <Detailed distances={[0, 10, 20]}>
-          <primitive object={scene} scale={0.8} position={[0, -0.8, 0]} />
-        </Detailed>
+      <Float speed={0.2} rotationIntensity={0.05} floatIntensity={0.1} floatingRange={[0, 0.03]}>
+        <primitive 
+          object={scene} 
+          scale={0.8} 
+          position={[0, -0.8, 0]} 
+          visible={true}
+        />
       </Float>
       <ContactShadows 
         position={[0, -1.4, 0]} 
@@ -108,6 +126,60 @@ const Model = ({ modelPath, isPlaying, animationProgress, setAnimationDuration }
         far={10} 
       />
     </>
+  );
+};
+
+// Lazy loaded 3D Scene component
+const ModelViewer = ({ modelPath, isPlaying, setAnimationDuration }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  useEffect(() => {
+    // Start preloading the model
+    preloadModel(modelPath).then(() => setIsLoaded(true));
+  }, [modelPath]);
+  
+  return (
+    <Canvas camera={{ position: [0, 1, 2.5], fov: 50 }} shadows>
+      <color attach="background" args={["#f8f9fa"]} />
+      <fog attach="fog" args={["#f8f9fa", 5, 15]} />
+      
+      <ambientLight intensity={0.5} />
+      <directionalLight 
+        position={[10, 10, 5]} 
+        intensity={0.8} 
+        castShadow 
+        shadow-mapSize={[1024, 1024]}
+      />
+      
+      <Suspense fallback={<LoadingScreen progress={0} />}>
+        {isLoaded && (
+          <>
+            <Model
+              key={modelPath}
+              modelPath={modelPath}
+              isPlaying={isPlaying}
+              setAnimationDuration={setAnimationDuration}
+            />
+          </>
+        )}
+      </Suspense>
+      
+      <OrbitControls 
+        minPolarAngle={0} 
+        maxPolarAngle={Math.PI / 2} 
+        enableZoom={true} 
+        enablePan={true}
+        minDistance={2}
+        maxDistance={5}
+        autoRotate={false}
+        target={[0, 0, 0]}
+        enableDamping={true}
+        dampingFactor={0.05}
+        zoomSpeed={0.5}
+        rotateSpeed={0.5}
+      />
+      <Environment preset="city" />
+    </Canvas>
   );
 };
 
@@ -130,7 +202,7 @@ const ExerciseCard = ({ exercise, isSelected, onClick }) => {
           <div className="benefits">
             <h4>Benefits</h4>
             <ul>
-              {exercise.benefits && exercise.benefits.map((benefit, index) => (
+              {exercise.benefits && exercise.benefits.slice(0, 2).map((benefit, index) => (
                 <li key={index}>{benefit}</li>
               ))}
             </ul>
@@ -138,7 +210,7 @@ const ExerciseCard = ({ exercise, isSelected, onClick }) => {
           <div className="steps">
             <h4>Key Tips</h4>
             <ol>
-              {exercise.tips.map((tip, index) => (
+              {exercise.tips.slice(0, 2).map((tip, index) => (
                 <li key={index}>{tip}</li>
               ))}
             </ol>
@@ -189,9 +261,11 @@ const PlayerControls = ({ isPlaying, togglePlay }) => {
 const TrainingPage = () => {
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [animationProgress, setAnimationProgress] = useState(0);
   const [animationDuration, setAnimationDuration] = useState(1);
   const [activeModelPath, setActiveModelPath] = useState('');
+  const [isModelLoading, setIsModelLoading] = useState(false);
+  const [difficultyLevel, setDifficultyLevel] = useState('intermediate');
+  const [filterCategory, setFilterCategory] = useState('All');
   const modelViewerRef = useRef(null);
   
   // Mock user data
@@ -211,13 +285,34 @@ const TrainingPage = () => {
       '#8b5cf6', // purple
       '#ec4899', // pink
     ][index % 6],
-    difficulty: Math.floor(Math.random() * 5) + 1, // Random difficulty 1-5
-    benefits: [
-      "Improves muscle strength",
-      "Enhances flexibility",
-      "Promotes better posture",
-    ].slice(0, Math.floor(Math.random() * 3) + 1), // Random 1-3 benefits
   }));
+
+  // Filter exercises by category
+  const filteredExercises = enhancedExercises.filter(exercise => {
+    if (filterCategory === 'All') return true;
+    
+    const muscles = (exercise.primaryMuscle + ' ' + exercise.secondaryMuscle).toLowerCase();
+    
+    switch(filterCategory) {
+      case 'Upper Body':
+        return muscles.includes('chest') || 
+               muscles.includes('shoulder') || 
+               muscles.includes('tricep') || 
+               muscles.includes('bicep') ||
+               muscles.includes('back');
+      case 'Lower Body':
+        return muscles.includes('quad') || 
+               muscles.includes('hamstring') || 
+               muscles.includes('glute') || 
+               muscles.includes('calf');
+      case 'Core':
+        return muscles.includes('core') || 
+               muscles.includes('ab') || 
+               muscles.includes('oblique');
+      default:
+        return true;
+    }
+  });
 
   // Handle play/pause
   const togglePlay = () => {
@@ -232,9 +327,9 @@ const TrainingPage = () => {
     
     // Reset player state and update model path
     setIsPlaying(false);
-    setAnimationProgress(0);
+    setIsModelLoading(true);
     setSelectedExercise(index);
-    setActiveModelPath(enhancedExercises[index].modelPath);
+    setActiveModelPath(filteredExercises[index].modelPath);
     
     // Scroll to model viewer after selection
     setTimeout(() => {
@@ -253,6 +348,27 @@ const TrainingPage = () => {
     setSelectedExercise(null);
   };
 
+  // Handle filter change
+  const handleFilterChange = (category) => {
+    setFilterCategory(category);
+    setSelectedExercise(null);
+  };
+
+  // Handle difficulty change
+  const handleDifficultyChange = (level) => {
+    setDifficultyLevel(level);
+  };
+
+  // Pre-load models for smoother experience - only when selecting an exercise
+  useEffect(() => {
+    if (selectedExercise !== null) {
+      const modelPath = filteredExercises[selectedExercise].modelPath;
+      preloadModel(modelPath).then(() => {
+        setIsModelLoading(false);
+      });
+    }
+  }, [selectedExercise, filteredExercises]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <AuthenticatedNavbar user={user} />
@@ -263,17 +379,50 @@ const TrainingPage = () => {
             <div className="filter-group">
               <label>Filter by:</label>
               <div className="filter-buttons">
-                <button className="filter-button active">All</button>
-                <button className="filter-button">Upper Body</button>
-                <button className="filter-button">Lower Body</button>
-                <button className="filter-button">Core</button>
+                <button 
+                  className={`filter-button ${filterCategory === 'All' ? 'active' : ''}`}
+                  onClick={() => handleFilterChange('All')}
+                >
+                  All
+                </button>
+                <button 
+                  className={`filter-button ${filterCategory === 'Upper Body' ? 'active' : ''}`}
+                  onClick={() => handleFilterChange('Upper Body')}
+                >
+                  Upper Body
+                </button>
+                <button 
+                  className={`filter-button ${filterCategory === 'Lower Body' ? 'active' : ''}`}
+                  onClick={() => handleFilterChange('Lower Body')}
+                >
+                  Lower Body
+                </button>
+                <button 
+                  className={`filter-button ${filterCategory === 'Core' ? 'active' : ''}`}
+                  onClick={() => handleFilterChange('Core')}
+                >
+                  Core
+                </button>
               </div>
+            </div>
+            
+            <div className="difficulty-selector">
+              <label>Difficulty Level:</label>
+              <select 
+                value={difficultyLevel}
+                onChange={(e) => handleDifficultyChange(e.target.value)}
+                className="difficulty-dropdown"
+              >
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
             </div>
           </div>
           
           {/* Exercise Cards Grid */}
           <div className="exercise-grid">
-            {enhancedExercises.map((exercise, index) => (
+            {filteredExercises.map((exercise, index) => (
               <ExerciseCard 
                 key={index}
                 exercise={exercise}
@@ -295,7 +444,7 @@ const TrainingPage = () => {
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 <div className="model-header">
-                  <h2>{enhancedExercises[selectedExercise].name}</h2>
+                  <h2>{filteredExercises[selectedExercise].name}</h2>
                   <button className="close-button" onClick={closeModelViewer}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -306,56 +455,74 @@ const TrainingPage = () => {
                 
                 <div className="model-content">
                   <div className="canvas-container">
-                    <Canvas camera={{ position: [0, 1, 2.5], fov: 50 }} shadows>
-                      <color attach="background" args={["#f8f9fa"]} />
-                      <fog attach="fog" args={["#f8f9fa", 5, 15]} />
-                      
-                      <ambientLight intensity={0.5} />
-                      <directionalLight 
-                        position={[10, 10, 5]} 
-                        intensity={0.8} 
-                        castShadow 
-                        shadow-mapSize={[1024, 1024]}
+                    {isModelLoading ? (
+                      <div className="loading-container">
+                        <div className="spinner"></div>
+                        <p>Loading 3D model...</p>
+                      </div>
+                    ) : (
+                      <ModelViewer
+                        key={activeModelPath}
+                        modelPath={activeModelPath}
+                        isPlaying={isPlaying}
+                        setAnimationDuration={setAnimationDuration}
                       />
-                      
-                      <PresentationControls
-                        global
-                        rotation={[0, 0, 0]}
-                        polar={[-Math.PI / 4, Math.PI / 4]}
-                        azimuth={[-Math.PI / 4, Math.PI / 4]}
-                        config={{ mass: 2, tension: 400 }}
-                        snap={{ mass: 4, tension: 400 }}
-                      >
-                        <Model
-                          key={activeModelPath} // Add key prop to force re-render when model changes
-                          modelPath={activeModelPath}
-                          isPlaying={isPlaying}
-                          animationProgress={animationProgress}
-                          setAnimationDuration={setAnimationDuration}
-                        />
-                      </PresentationControls>
-                      
-                      <OrbitControls 
-                        minPolarAngle={0} 
-                        maxPolarAngle={Math.PI / 2} 
-                        enableZoom={true} 
-                        enablePan={true} 
-                      />
-                      <Environment preset="city" />
-                    </Canvas>
+                    )}
                   </div>
                   
                   <div className="instructions-panel">
                     <div className="instruction-section">
                       <h3>How to perform</h3>
                       <ol className="instruction-steps">
-                        {enhancedExercises[selectedExercise].tips.map((tip, index) => (
+                        {filteredExercises[selectedExercise].tips.map((tip, index) => (
                           <li key={index}>
                             <div className="step-number">{index + 1}</div>
                             <div className="step-text">{tip}</div>
                           </li>
                         ))}
                       </ol>
+                      
+                      <div className="form-cues">
+                        <h4>Form Cues</h4>
+                        <ul>
+                          {filteredExercises[selectedExercise].formCues?.map((cue, index) => (
+                            <li key={index}>{cue}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      <div className="breathing-pattern">
+                        <h4>Breathing</h4>
+                        <p>{filteredExercises[selectedExercise].breathingPattern}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="training-details">
+                      <h3>Training Details ({difficultyLevel})</h3>
+                      <div className="training-metrics">
+                        <div className="metric">
+                          <span className="metric-label">Sets:</span>
+                          <span className="metric-value">{filteredExercises[selectedExercise].sets[difficultyLevel]}</span>
+                        </div>
+                        <div className="metric">
+                          <span className="metric-label">Reps:</span>
+                          <span className="metric-value">{filteredExercises[selectedExercise].reps[difficultyLevel]}</span>
+                        </div>
+                        <div className="metric">
+                          <span className="metric-label">Duration:</span>
+                          <span className="metric-value">{filteredExercises[selectedExercise].duration[difficultyLevel]}</span>
+                        </div>
+                        <div className="metric">
+                          <span className="metric-label">Rest:</span>
+                          <span className="metric-value">{filteredExercises[selectedExercise].restPeriod}</span>
+                        </div>
+                        {filteredExercises[selectedExercise].caloriesBurned && (
+                          <div className="metric">
+                            <span className="metric-label">Est. Calories:</span>
+                            <span className="metric-value">{filteredExercises[selectedExercise].caloriesBurned}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
                     <div className="info-section">
@@ -369,8 +536,8 @@ const TrainingPage = () => {
                         </div>
                         <div className="info-content">
                           <h4>Muscles worked</h4>
-                          <p>Primary: {enhancedExercises[selectedExercise].primaryMuscle || "Full body"}</p>
-                          <p>Secondary: {enhancedExercises[selectedExercise].secondaryMuscle || "Core stabilizers"}</p>
+                          <p>Primary: {filteredExercises[selectedExercise].primaryMuscle || "Full body"}</p>
+                          <p>Secondary: {filteredExercises[selectedExercise].secondaryMuscle || "Core stabilizers"}</p>
                         </div>
                       </div>
                       
@@ -386,10 +553,21 @@ const TrainingPage = () => {
                         </div>
                         <div className="info-content">
                           <h4>Equipment</h4>
-                          <p>{enhancedExercises[selectedExercise].equipment || "No equipment needed"}</p>
+                          <p>{filteredExercises[selectedExercise].equipment || "No equipment needed"}</p>
                         </div>
                       </div>
                     </div>
+                    
+                    {filteredExercises[selectedExercise].variations && (
+                      <div className="variations">
+                        <h4>Variations</h4>
+                        <ul className="variation-list">
+                          {filteredExercises[selectedExercise].variations.map((variation, index) => (
+                            <li key={index}>{variation}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </div>
                 

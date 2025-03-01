@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, lazy, Suspense } from "react";
 import { FaDumbbell } from "react-icons/fa";
 import { MdMenu } from "react-icons/md";
 import { IoMdArrowDropdown } from "react-icons/io";
@@ -12,12 +12,16 @@ import { AiFillHome } from "react-icons/ai";
 import { RiMentalHealthFill } from "react-icons/ri";
 import { FaRobot, FaUserCircle, FaUtensils } from "react-icons/fa";
 import { MdOutlineCalculate } from "react-icons/md";
-import TrainingPage from "../../pages/Training Page/TrainingPage";
+import { BiDumbbell } from "react-icons/bi"; // Added for 3D Training icon
+
+// Lazy load the TrainingPage component
+// This ensures it only loads when needed
+const TrainingPage = lazy(() => import("../../pages/Training Page/TrainingPage"));
 
 const dashboardMenu = [
   { id: 1, title: "Home", link: "/dashboard", icon: <AiFillHome /> },
   { id: 2, title: "Doctor Appointment", link: "/consultation", icon: <RiMentalHealthFill /> },
-  // { id: 3, title: "3D Exercise", link: "/3d-training", icon: <TrainingPage /> },
+  { id: 3, title: "3D Exercise", link: "/3d-training", icon: <BiDumbbell /> }, // Re-enabled with custom icon
   { id: 4, title: "Recipe Generator", link: "/recipes", icon: <FaUtensils /> },
   { id: 5, title: "BMI Calculator", link: "/bmi-calculator", icon: <MdOutlineCalculate /> },
 ];
@@ -38,6 +42,14 @@ const AuthenticatedNavbar = ({ user }) => {
     { path: "/bmi-calculator", label: "BMI Calculator" },
     { path: "/recipes", label: "Meal Planning" },
   ];
+  
+  // Preload TrainingPage when hovering over the 3D Exercise menu item
+  const handleTrainingHover = () => {
+    // This triggers the lazy load of the TrainingPage component
+    import("../../pages/Training Page/TrainingPage").catch(err => 
+      console.log("Error preloading training page:", err)
+    );
+  };
   
   // Handle click outside to close dropdown
   const handleClickOutside = (e) => {
@@ -84,6 +96,23 @@ const AuthenticatedNavbar = ({ user }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [scrolled]);
+  
+  // Preload TrainingPage component when the route includes 3d-training
+  useEffect(() => {
+    // Preload the TrainingPage component if we're near the 3D training route
+    if (location.pathname.includes('dashboard') || 
+        location.pathname.includes('chatbot') ||
+        location.pathname.includes('bmi')) {
+      // Start loading the TrainingPage component in the background
+      const preloadTraining = setTimeout(() => {
+        import("../../pages/Training Page/TrainingPage").catch(err => 
+          console.log("Error preloading training page:", err)
+        );
+      }, 2000); // Delay preload to prioritize current page
+      
+      return () => clearTimeout(preloadTraining);
+    }
+  }, [location.pathname]);
   
   return (
     <>
@@ -132,6 +161,12 @@ const AuthenticatedNavbar = ({ user }) => {
                   <motion.div
                     key={item.id}
                     onClick={() => navigate(item.link)}
+                    onMouseEnter={() => {
+                      // Start preloading when hovering on 3D Exercise link
+                      if (item.title === "3D Exercise") {
+                        handleTrainingHover();
+                      }
+                    }}
                     className={`relative group flex items-center gap-2 text-base font-medium cursor-pointer ${
                       scrolled ? "text-gray-700" : "text-gray-800"
                     } ${isActive ? 'text-[#0dcfcf]' : ''}`}
@@ -187,6 +222,7 @@ const AuthenticatedNavbar = ({ user }) => {
               className="md:hidden"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => setOpen(true)}  // Added onClick handler
             >
               <div className={`p-2.5 rounded-lg ${
                 scrolled

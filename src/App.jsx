@@ -26,6 +26,7 @@ function App() {
         <Route path="/bmi-calculator" element={<BMICalculator />} />
         <Route path="/consultation" element={<DoctorAppointment />} />
         <Route path="/user/history/:userId" element={<UserHistoryPage/>}/>
+        <Route path="/recipes" element={<MealPlanning/>}/>
       </Routes>
     </Router>
   );
