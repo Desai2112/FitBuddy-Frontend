@@ -55,14 +55,14 @@ const Login = () => {
         password: formData.password,
       });
       console.log("login")
-      console.log(response.data.role)
+      console.log(response.data.data)
 
       if (response.data.success) {
         // Redirect to appropriate dashboard based on user role
-        if (response.data) {
+        if (response.data.data.role == "user") {
           navigate('/dashboard');
         } else {
-          navigate('/doctor-dashboard');
+          navigate('/doctor');
         }
       }
     } catch (error) {

@@ -11,6 +11,7 @@ import DoctorAppointment from './pages/LandingPage/DoctorAppointment';
 import PdfViewer from './pages/LandingPage/PdfViewer';
 import MealPlanning from './pages/LandingPage/MealPlanning';
 import UserHistoryPage from './pages/LandingPage/UserHistoryPage';
+import DoctorDashboard from './components/DoctorPanel/DoctorDashboard';
 
 function App() {
   return (
@@ -27,6 +28,9 @@ function App() {
         <Route path="/consultation" element={<DoctorAppointment />} />
         <Route path="/user/history/:userId" element={<UserHistoryPage/>}/>
         <Route path="/recipes" element={<MealPlanning/>}/>
+        
+        {/* Doctor Panel Routes */}
+        <Route path="/doctor/*" element={<DoctorDashboard />} />
       </Routes>
     </Router>
   );
