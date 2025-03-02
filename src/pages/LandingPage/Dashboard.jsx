@@ -337,6 +337,7 @@ const Dashboard = () => {
                 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-transparent border-2 border-white text-white px-12 py-5 rounded-full font-semibold hover:bg-white hover:text-[#0fa2b2] transition-all duration-300 relative overflow-hidden group"
+                onClick={()=>navigate("/3d-training")}
               >
                 <span className="relative z-10">Book Consultation</span>
                 <motion.div
