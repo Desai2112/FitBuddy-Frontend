@@ -59,11 +59,22 @@ const Login = () => {
 
       if (response.data.success) {
         // Redirect to appropriate dashboard based on user role
-        if (response.data.data.role == "user") {
-          navigate('/dashboard');
-        } else {
-          navigate('/doctor');
+        if(response.data.data.isProfileCompleted){
+          if (response.data.data.role == "user") {
+            navigate('/dashboard');
+          } else {
+            navigate('/doctor');
+          }
         }
+        else{
+          if(response.data.data.role=="user"){
+            navigate('/userProfile/create');
+          }
+          else{
+            navigate('/doctor');
+          }
+        }
+        
       }
     } catch (error) {
       setError(
