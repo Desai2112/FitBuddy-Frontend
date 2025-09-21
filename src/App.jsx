@@ -8,7 +8,6 @@ import TrainingPage from './pages/Training Page/TrainingPage';
 import ProfilePage from './pages/LandingPage/ProfilePage';
 import BMICalculator from './components/LandingPage/BMICalculator';
 import DoctorAppointment from './pages/LandingPage/DoctorAppointment';
-import PdfViewer from './pages/LandingPage/PdfViewer';
 import MealPlanning from './pages/LandingPage/MealPlanning';
 import UserHistoryPage from './pages/LandingPage/UserHistoryPage';
 import DoctorDashboard from './components/DoctorPanel/DoctorDashboard';

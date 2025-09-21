@@ -434,150 +434,107 @@ const TrainingPage = () => {
           
           {/* 3D Model Viewer */}
           <AnimatePresence>
-            {selectedExercise !== null && (
-              <motion.div 
-                className="model-viewer-container"
-                ref={modelViewerRef}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 50 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              >
-                <div className="model-header">
-                  <h2>{filteredExercises[selectedExercise].name}</h2>
-                  <button className="close-button" onClick={closeModelViewer}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
-                </div>
-                
-                <div className="model-content">
-                  <div className="canvas-container">
-                    {isModelLoading ? (
-                      <div className="loading-container">
-                        <div className="spinner"></div>
-                        <p>Loading 3D model...</p>
-                      </div>
-                    ) : (
-                      <ModelViewer
-                        key={activeModelPath}
-                        modelPath={activeModelPath}
-                        isPlaying={isPlaying}
-                        setAnimationDuration={setAnimationDuration}
-                      />
-                    )}
-                  </div>
-                  
-                  <div className="instructions-panel">
-                    <div className="instruction-section">
-                      <h3>How to perform</h3>
-                      <ol className="instruction-steps">
-                        {filteredExercises[selectedExercise].tips.map((tip, index) => (
-                          <li key={index}>
-                            <div className="step-number">{index + 1}</div>
-                            <div className="step-text">{tip}</div>
-                          </li>
-                        ))}
-                      </ol>
-                      
-                      <div className="form-cues">
-                        <h4>Form Cues</h4>
-                        <ul>
-                          {filteredExercises[selectedExercise].formCues?.map((cue, index) => (
-                            <li key={index}>{cue}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      
-                      <div className="breathing-pattern">
-                        <h4>Breathing</h4>
-                        <p>{filteredExercises[selectedExercise].breathingPattern}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="training-details">
-                      <h3>Training Details ({difficultyLevel})</h3>
-                      <div className="training-metrics">
-                        <div className="metric">
-                          <span className="metric-label">Sets:</span>
-                          <span className="metric-value">{filteredExercises[selectedExercise].sets[difficultyLevel]}</span>
-                        </div>
-                        <div className="metric">
-                          <span className="metric-label">Reps:</span>
-                          <span className="metric-value">{filteredExercises[selectedExercise].reps[difficultyLevel]}</span>
-                        </div>
-                        <div className="metric">
-                          <span className="metric-label">Duration:</span>
-                          <span className="metric-value">{filteredExercises[selectedExercise].duration[difficultyLevel]}</span>
-                        </div>
-                        <div className="metric">
-                          <span className="metric-label">Rest:</span>
-                          <span className="metric-value">{filteredExercises[selectedExercise].restPeriod}</span>
-                        </div>
-                        {filteredExercises[selectedExercise].caloriesBurned && (
-                          <div className="metric">
-                            <span className="metric-label">Est. Calories:</span>
-                            <span className="metric-value">{filteredExercises[selectedExercise].caloriesBurned}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="info-section">
-                      <div className="info-card">
-                        <div className="info-icon muscles">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M6 3v18M18 3v18"></path>
-                            <path d="M6 8h12"></path>
-                            <path d="M6 16h12"></path>
-                          </svg>
-                        </div>
-                        <div className="info-content">
-                          <h4>Muscles worked</h4>
-                          <p>Primary: {filteredExercises[selectedExercise].primaryMuscle || "Full body"}</p>
-                          <p>Secondary: {filteredExercises[selectedExercise].secondaryMuscle || "Core stabilizers"}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="info-card">
-                        <div className="info-icon equipment">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                            <path d="M2 8h16v8H2z"></path>
-                            <path d="M6 8v8"></path>
-                            <path d="M10 8v8"></path>
-                            <path d="M14 8v8"></path>
-                          </svg>
-                        </div>
-                        <div className="info-content">
-                          <h4>Equipment</h4>
-                          <p>{filteredExercises[selectedExercise].equipment || "No equipment needed"}</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {filteredExercises[selectedExercise].variations && (
-                      <div className="variations">
-                        <h4>Variations</h4>
-                        <ul className="variation-list">
-                          {filteredExercises[selectedExercise].variations.map((variation, index) => (
-                            <li key={index}>{variation}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <PlayerControls 
-                  isPlaying={isPlaying}
-                  togglePlay={togglePlay}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+  {selectedExercise !== null && (
+    <motion.div
+      className="model-viewer-container"
+      ref={modelViewerRef}
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 50 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    >
+      {/* Header */}
+      <div className="model-header">
+        <h2>{filteredExercises[selectedExercise].name}</h2>
+        <button className="close-button" onClick={closeModelViewer}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      {/* Full-width Model */}
+      <div className="w-full h-[400px] md:h-[500px] lg:h-[600px] flex justify-center items-center bg-gray-50 p-4">
+        {isModelLoading ? (
+          <div className="loading-container">
+            <div className="spinner"></div>
+            <p>Loading 3D model...</p>
+          </div>
+        ) : (
+          <ModelViewer
+            key={activeModelPath}
+            modelPath={activeModelPath}
+            isPlaying={isPlaying}
+            setAnimationDuration={setAnimationDuration}
+          />
+        )}
+      {/* Play Controls */}
+      <div className="w-1/4 flex justify-center my-4">
+        <PlayerControls isPlaying={isPlaying} togglePlay={togglePlay} />
+      </div>
+      </div>
+
+
+      {/* Two Column Layout for Details */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 pb-8">
+        {/* Column 1 */}
+        <div className="space-y-6">
+          {/* How to perform */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h3 className="text-xl font-semibold mb-4">How to Perform</h3>
+            <ol className="list-decimal list-inside space-y-2">
+              {filteredExercises[selectedExercise].tips.map((tip, i) => (
+                <li key={i}>{tip}</li>
+              ))}
+            </ol>
+          </div>
+
+          {/* Training Details */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h3 className="text-xl font-semibold mb-4">
+              Training Details ({difficultyLevel})
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div><strong>Sets:</strong> {filteredExercises[selectedExercise].sets[difficultyLevel]}</div>
+              <div><strong>Reps:</strong> {filteredExercises[selectedExercise].reps[difficultyLevel]}</div>
+              <div><strong>Duration:</strong> {filteredExercises[selectedExercise].duration[difficultyLevel]}</div>
+              <div><strong>Rest:</strong> {filteredExercises[selectedExercise].restPeriod}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Column 2 */}
+        <div className="space-y-6">
+          {/* Muscles & Equipment */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h3 className="text-xl font-semibold mb-4">Muscles Worked</h3>
+            <p><strong>Primary:</strong> {filteredExercises[selectedExercise].primaryMuscle || "Full body"}</p>
+            <p><strong>Secondary:</strong> {filteredExercises[selectedExercise].secondaryMuscle || "Core stabilizers"}</p>
+          </div>
+
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h3 className="text-xl font-semibold mb-4">Equipment</h3>
+            <p>{filteredExercises[selectedExercise].equipment || "No equipment needed"}</p>
+          </div>
+
+          {/* Variations */}
+          {filteredExercises[selectedExercise].variations && (
+            <div className="bg-white rounded-lg p-6 shadow">
+              <h3 className="text-xl font-semibold mb-4">Variations</h3>
+              <ul className="list-disc list-inside">
+                {filteredExercises[selectedExercise].variations.map((variation, i) => (
+                  <li key={i}>{variation}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
         </div>
       </PageWrapper>
     </div>

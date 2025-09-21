@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+
 import { Calendar, User, Phone, Mail, MapPin, Heart, FileText, Upload, Plus, X, AlertCircle } from "lucide-react";
 
 const CreateProfilePage = () => {
+
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     dateOfBirth: "",
     gender: "",
@@ -131,6 +135,7 @@ const CreateProfilePage = () => {
     console.log("Documents:", documents);
     // Here you would typically send the data to your backend
     alert("Profile creation form submitted! Check console for data.");
+    navigate('/dashboard')
   };
 
   const renderStepIndicator = () => (

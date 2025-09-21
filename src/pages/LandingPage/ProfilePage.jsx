@@ -101,12 +101,18 @@ const ProfilePage = () => {
 
   const toggleDocumentVisibility = async (docId, currentVisibility) => {
     try {
+      
+
       if (currentVisibility) {
+              console.log("Hello");
+
         const response = await axios.post(
-          "http://localhost:5000/api/profile/doc/stop",
+          "http://localhost:5000/api/profile/doc/toggle",
           { docId },
           { withCredentials: true }
         );
+        console.log(response);
+        
         if (response.data.success) {
           const updatedDocuments = documents.map(doc =>
             doc.id === docId ? { ...doc, visible: false } : doc
@@ -115,9 +121,18 @@ const ProfilePage = () => {
           showNotification("Document visibility updated successfully");
         }
       } else {
+        const response = await axios.post(
+          "http://localhost:5000/api/profile/doc/toggle",
+          { docId },
+          { withCredentials: true }
+        );
+              console.log("World");
+
         const updatedDocuments = documents.map(doc =>
           doc.id === docId ? { ...doc, visible: true } : doc
         );
+              console.log(response);
+
         setDocuments(updatedDocuments);
         showNotification("Document visibility updated successfully");
       }
