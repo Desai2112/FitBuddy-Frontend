@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaDumbbell } from 'react-icons/fa';
 import axiosInstance from '../../api/axios';
 
@@ -18,6 +19,7 @@ const OtpVerificationModal = ({
   const [countdown, setCountdown] = useState(0);
 
   const inputRefs = useRef([]);
+    const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen && inputRefs.current[0]) {
@@ -152,7 +154,6 @@ const OtpVerificationModal = ({
     setCountdown(60); // 60 second cooldown
 
     try {
-      // Call resend endpoint
       await axiosInstance.post('/api/auth/resend-otp', {
         email: email
       });

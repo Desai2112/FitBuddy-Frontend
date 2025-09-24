@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 
 import { Calendar, User, Phone, Mail, MapPin, Heart, FileText, Upload, Plus, X, AlertCircle } from "lucide-react";
+import axiosInstance from "../../api/axios";
 
 const CreateProfilePage = () => {
 
@@ -130,13 +131,59 @@ const CreateProfilePage = () => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Form Data:", formData);
-    console.log("Documents:", documents);
-    // Here you would typically send the data to your backend
-    alert("Profile creation form submitted! Check console for data.");
-    navigate('/dashboard')
+const handleSubmit = async () => {
+  console.log("Form Data:", formData);
+  console.log("Documents:", documents);
+
+  const payload = {
+    dateOfBirth: formData.dateOfBirth,
+    gender: formData.gender,
+    contactInfo: {
+      mobile: formData.contactInfo.phone, // ✅ map phone → mobile
+      alternatePhone: formData.contactInfo.alternatePhone,
+      whatsapp: "" // optional
+    },
+    address: {
+      street: formData.address.street,
+      city: formData.address.city,
+      state: formData.address.state,
+      postalCode: formData.address.zipCode, // ✅ rename
+      country: formData.address.country
+    },
+    healthInfo: {
+      bloodGroup: formData.healthInfo.bloodType, // ✅ rename
+      height: Number(formData.healthInfo.height), // ✅ must be number
+      weight: Number(formData.healthInfo.weight),
+      allergies: formData.healthInfo.allergies ? [formData.healthInfo.allergies] : [],
+      currentMedications: formData.healthInfo.medications ? [formData.healthInfo.medications] : [],
+      medicalConditions: formData.healthInfo.medicalConditions ? [formData.healthInfo.medicalConditions] : []
+    },
+    emergencyContact: {
+      primaryContact: {
+        name: formData.emergencyContact.name,
+        relationship: formData.emergencyContact.relationship,
+        phone: formData.emergencyContact.phone,
+        address: "" // optional
+      }
+    },
+    insurance: {
+      provider: formData.insurance.provider,
+      policyNumber: formData.insurance.policyNumber,
+      validUntil: null // optional
+    }
   };
+
+  try {
+    const response = await axiosInstance.post("/api/profile/create", payload);
+    console.log(response.data);
+    alert("Profile created successfully!");
+    navigate('/dashboard');
+  } catch (error) {
+    console.error("Error creating profile:", error.response?.data || error.message);
+    alert("Failed to create profile. Check console for details.");
+  }
+};
+
 
   const renderStepIndicator = () => (
     <div className="mb-8">
