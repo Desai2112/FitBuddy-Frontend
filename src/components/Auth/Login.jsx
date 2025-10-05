@@ -54,16 +54,27 @@ const Login = () => {
         email: formData.email,
         password: formData.password,
       });
-      console.log("login")
-      console.log(response.data.data)
+      // console.log("login")
+      // console.log(response.data.data)
 
       if (response.data.success) {
         // Redirect to appropriate dashboard based on user role
-        if (response.data.data.role == "user") {
-          navigate('/dashboard');
-        } else {
-          navigate('/doctor');
+        if(response.data.data.profileCompleted){
+          if (response.data.data.role == "user") {
+            navigate('/dashboard');
+          } else {
+            navigate('/doctor');
+          }
         }
+        else{
+          if(response.data.data.role=="user"){
+            navigate('/userProfile/create');
+          }
+          else{
+            navigate('/doctor');
+          }
+        }
+        
       }
     } catch (error) {
       setError(

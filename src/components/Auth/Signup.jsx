@@ -139,10 +139,11 @@ const Signup = () => {
       
       if (response.data.success) {
         // Redirect based on account type
-        if (formData.accountType.toLowerCase() === 'user') {
-          navigate('/'); // Or wherever you want users to go
-        } else {
-          navigate('/doctor-dashboard'); // Or wherever you want doctors to go
+        if(response.data.data.role==='user'){
+          navigate('/userProfile/create');
+        }
+        else if(response.data.data.role==='Doctor'){
+          navigate('/doctor-dashboard')
         }
       }
     } catch (error) {

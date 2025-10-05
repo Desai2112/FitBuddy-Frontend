@@ -456,292 +456,124 @@ const TrainingPage = () => {
               </select>
             </div>
           </div>
+          
+          {/* Exercise Cards Grid */}
+          <div className="exercise-grid">
+            {filteredExercises.map((exercise, index) => (
+              <ExerciseCard 
+                key={index}
+                exercise={exercise}
+                isSelected={selectedExercise === index}
+                onClick={() => handleCardSelect(index)}
+              />
+            ))}
+          </div>
+          
+          {/* 3D Model Viewer */}
+          <AnimatePresence>
+  {selectedExercise !== null && (
+    <motion.div
+      className="model-viewer-container"
+      ref={modelViewerRef}
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 50 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    >
+      {/* Header */}
+      <div className="model-header">
+        <h2>{filteredExercises[selectedExercise].name}</h2>
+        <button className="close-button" onClick={closeModelViewer}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      {/* Full-width Model */}
+      <div className="w-full h-[400px] md:h-[500px] lg:h-[600px] flex justify-center items-center bg-gray-50 p-4">
+        {isModelLoading ? (
+          <div className="loading-container">
+            <div className="spinner"></div>
+            <p>Loading 3D model...</p>
+          </div>
+        ) : (
+          <ModelViewer
+            key={activeModelPath}
+            modelPath={activeModelPath}
+            isPlaying={isPlaying}
+            setAnimationDuration={setAnimationDuration}
+          />
+        )}
+      {/* Play Controls */}
+      <div className="w-1/4 flex justify-center my-4">
+        <PlayerControls isPlaying={isPlaying} togglePlay={togglePlay} />
+      </div>
+      </div>
+
+
+      {/* Two Column Layout for Details */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 pb-8">
+        {/* Column 1 */}
+        <div className="space-y-6">
+          {/* How to perform */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h3 className="text-xl font-semibold mb-4">How to Perform</h3>
+            <ol className="list-decimal list-inside space-y-2">
+              {filteredExercises[selectedExercise].tips.map((tip, i) => (
+                <li key={i}>{tip}</li>
+              ))}
+            </ol>
+          </div>
+
+          {/* Training Details */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h3 className="text-xl font-semibold mb-4">
+              Training Details ({difficultyLevel})
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div><strong>Sets:</strong> {filteredExercises[selectedExercise].sets[difficultyLevel]}</div>
+              <div><strong>Reps:</strong> {filteredExercises[selectedExercise].reps[difficultyLevel]}</div>
+              <div><strong>Duration:</strong> {filteredExercises[selectedExercise].duration[difficultyLevel]}</div>
+              <div><strong>Rest:</strong> {filteredExercises[selectedExercise].restPeriod}</div>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-          {filteredExercises.map((exercise, index) => (
-            <ExerciseCard
-              key={index}
-              exercise={exercise}
-              isSelected={selectedExercise === index}
-              onClick={() => handleCardSelect(index)}
-              category={exercise.category}
-            />
-          ))}
-        </div>
+        {/* Column 2 */}
+        <div className="space-y-6">
+          {/* Muscles & Equipment */}
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h3 className="text-xl font-semibold mb-4">Muscles Worked</h3>
+            <p><strong>Primary:</strong> {filteredExercises[selectedExercise].primaryMuscle || "Full body"}</p>
+            <p><strong>Secondary:</strong> {filteredExercises[selectedExercise].secondaryMuscle || "Core stabilizers"}</p>
+          </div>
 
-        <AnimatePresence>
-          {selectedExercise !== null && (
-            <motion.section
-              className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-8"
-              ref={modelViewerRef}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 50 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-gray-800">
-                  {filteredExercises[selectedExercise].name}
-                </h2>
-                <button
-                  className="p-2 text-gray-600 hover:text-gray-800 focus:ring-2 focus:ring-blue-500 rounded-full"
-                  onClick={closeModelViewer}
-                  aria-label="Close model viewer"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="w-6 h-6"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
+          <div className="bg-white rounded-lg p-6 shadow">
+            <h3 className="text-xl font-semibold mb-4">Equipment</h3>
+            <p>{filteredExercises[selectedExercise].equipment || "No equipment needed"}</p>
+          </div>
 
-              <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-                <div className="lg:w-3/5 h-[400px] sm:h-[500px] rounded-lg overflow-hidden border border-gray-200">
-                  {isModelLoading ? (
-                    <div className="flex flex-col items-center justify-center h-full bg-gray-100/80">
-                      <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-                      <p className="text-gray-600 text-sm mt-2">Loading 3D model...</p>
-                      <div aria-live="polite" className="sr-only">
-                        3D model loading
-                      </div>
-                    </div>
-                  ) : (
-                    <ModelViewer
-                      key={activeModelPath}
-                      modelPath={activeModelPath}
-                      isPlaying={isPlaying}
-                      setAnimationDuration={setAnimationDuration}
-                      toggleZoom={toggleZoom}
-                    />
-                  )}
-                </div>
-
-                <div className="lg:w-2/5 flex flex-col gap-4">
-                  <div className="flex justify-between items-center sm:hidden">
-                    <h3 className="text-lg font-semibold text-gray-800">Details</h3>
-                    <button
-                      className="p-2 text-gray-600 hover:text-gray-800"
-                      onClick={() => setIsInstructionsCollapsed(!isInstructionsCollapsed)}
-                      aria-label={isInstructionsCollapsed ? "Expand instructions" : "Collapse instructions"}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        className={`w-6 h-6 transform ${isInstructionsCollapsed ? "rotate-180" : ""}`}
-                      >
-                        <path d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                  </div>
-                  <motion.div
-                    className={`flex flex-col gap-4 ${isInstructionsCollapsed ? "hidden sm:flex" : ""}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="flex gap-2 relative">
-                      {[
-                        { id: "instructions", label: "Instructions", icon: "M9 3v18M15 3v18M3 9h18M3 15h18" },
-                        { id: "details", label: "Details", icon: "M12 8v8m-4-4h8" },
-                        { id: "variations", label: "Variations", icon: "M4 6h16M4 12h16M4 18h16" },
-                      ].map((tab) => (
-                        <motion.button
-                          key={tab.id}
-                          className={`flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium transition-colors relative ${
-                            activeTab === tab.id
-                              ? "bg-blue-500 text-white border-blue-500"
-                              : "bg-white text-gray-800 hover:bg-blue-500 hover:text-white"
-                          }`}
-                          onClick={() => setActiveTab(tab.id)}
-                          aria-label={`View ${tab.label}`}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            className="w-4 h-4"
-                          >
-                            <path d={tab.icon} />
-                          </svg>
-                          {tab.label}
-                          {activeTab === tab.id && (
-                            <motion.div
-                              className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"
-                              layoutId="tab-underline"
-                              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            />
-                          )}
-                        </motion.button>
-                      ))}
-                    </div>
-                    <motion.div
-                      className="bg-gray-100 p-4 rounded-md"
-                      key={activeTab}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {activeTab === "instructions" && (
-                        <div className="flex flex-col gap-4">
-                          <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-semibold text-gray-800">How to Perform</h3>
-                            <button
-                              className="text-sm text-blue-500 hover:text-blue-600"
-                              onClick={copyTipsToClipboard}
-                              aria-label="Copy tips to clipboard"
-                            >
-                              Copy Tips
-                            </button>
-                          </div>
-                          <ol className="list-decimal pl-6 text-sm text-gray-600">
-                            {filteredExercises[selectedExercise].tips.map((tip, index) => (
-                              <li key={index} className="flex gap-2">
-                                <span className="font-medium">{index + 1}.</span>
-                                <span>{tip}</span>
-                              </li>
-                            ))}
-                          </ol>
-                          <div>
-                            <h4 className="text-sm font-semibold text-gray-800">Form Cues</h4>
-                            <ul className="list-disc pl-6 text-sm text-gray-600">
-                              {filteredExercises[selectedExercise].formCues?.map((cue, index) => (
-                                <li key={index}>{cue}</li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <h4 className="text-sm font-semibold text-gray-800">Breathing</h4>
-                            <p className="text-sm text-gray-600">
-                              {filteredExercises[selectedExercise].breathingPattern}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                      {activeTab === "details" && (
-                        <div className="flex flex-col gap-4">
-                          <h3 className="text-lg font-semibold text-gray-800">
-                            Training Details ({difficultyLevel})
-                          </h3>
-                          <div className="bg-white p-4 rounded-md shadow-sm">
-                            <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                              <div>
-                                <span className="font-semibold">Sets:</span>
-                                <span className="ml-2">
-                                  {filteredExercises[selectedExercise].sets[difficultyLevel]}
-                                </span>
-                              </div>
-                              <div>
-                                <span className="font-semibold">Reps:</span>
-                                <span className="ml-2">
-                                  {filteredExercises[selectedExercise].reps[difficultyLevel]}
-                                </span>
-                              </div>
-                              <div>
-                                <span className="font-semibold">Duration:</span>
-                                <span className="ml-2">
-                                  {filteredExercises[selectedExercise].duration[difficultyLevel]}
-                                </span>
-                              </div>
-                              <div>
-                                <span className="font-semibold">Rest:</span>
-                                <span className="ml-2">
-                                  {filteredExercises[selectedExercise].restPeriod}
-                                </span>
-                              </div>
-                              {filteredExercises[selectedExercise].caloriesBurned && (
-                                <div>
-                                  <span className="font-semibold">Est. Calories:</span>
-                                  <span className="ml-2">
-                                    {filteredExercises[selectedExercise].caloriesBurned}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex flex-col gap-4">
-                            <div className="flex items-start gap-3">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                className="w-6 h-6 text-gray-600"
-                              >
-                                <path d="M6 3v18M18 3v18"></path>
-                                <path d="M6 8h12"></path>
-                                <path d="M6 16h12"></path>
-                              </svg>
-                              <div>
-                                <h4 className="text-sm font-semibold text-gray-800">Muscles Worked</h4>
-                                <p className="text-sm text-gray-600">
-                                  Primary: {filteredExercises[selectedExercise].primaryMuscle || "Full body"}
-                                </p>
-                                <p className="text-sm text-gray-600">
-                                  Secondary: {filteredExercises[selectedExercise].secondaryMuscle || "Core stabilizers"}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-start gap-3">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                className="w-6 h-6 text-gray-600"
-                              >
-                                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                                <path d="M2 8h16v8H2z"></path>
-                                <path d="M6 8v8"></path>
-                                <path d="M10 8v8"></path>
-                                <path d="M14 8v8"></path>
-                              </svg>
-                              <div>
-                                <h4 className="text-sm font-semibold text-gray-800">Equipment</h4>
-                                <p className="text-sm text-gray-600">
-                                  {filteredExercises[selectedExercise].equipment || "No equipment needed"}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      {activeTab === "variations" && filteredExercises[selectedExercise].variations && (
-                        <div className="flex flex-col gap-4">
-                          <h3 className="text-lg font-semibold text-gray-800">Variations</h3>
-                          <ul className="list-disc pl-6 text-sm text-gray-600">
-                            {filteredExercises[selectedExercise].variations.map((variation, index) => (
-                              <li key={index}>{variation}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </motion.div>
-                  </motion.div>
-                </div>
-              </div>
-
-              <PlayerControls isPlaying={isPlaying} togglePlay={togglePlay} toggleZoom={toggleZoom} />
-            </motion.section>
+          {/* Variations */}
+          {filteredExercises[selectedExercise].variations && (
+            <div className="bg-white rounded-lg p-6 shadow">
+              <h3 className="text-xl font-semibold mb-4">Variations</h3>
+              <ul className="list-disc list-inside">
+                {filteredExercises[selectedExercise].variations.map((variation, i) => (
+                  <li key={i}>{variation}</li>
+                ))}
+              </ul>
+            </div>
           )}
-        </AnimatePresence>
-      </main>
+        </div>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+        </div>
+      </PageWrapper>
     </div>
   );
 };

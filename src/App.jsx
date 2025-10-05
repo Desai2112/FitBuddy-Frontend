@@ -8,10 +8,10 @@ import TrainingPage from './pages/Training Page/TrainingPage';
 import ProfilePage from './pages/LandingPage/ProfilePage';
 import BMICalculator from './components/LandingPage/BMICalculator';
 import DoctorAppointment from './pages/LandingPage/DoctorAppointment';
-import PdfViewer from './pages/LandingPage/PdfViewer';
 import MealPlanning from './pages/LandingPage/MealPlanning';
 import UserHistoryPage from './pages/LandingPage/UserHistoryPage';
 import DoctorDashboard from './components/DoctorPanel/DoctorDashboard';
+import CreateProfilePage from './components/Auth/CreateProfilePage ';
 
 function App() {
   return (
@@ -22,6 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/userProfile/create" element={<CreateProfilePage />} />
         <Route path="/3d-training" element={<TrainingPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/bmi-calculator" element={<BMICalculator />} />

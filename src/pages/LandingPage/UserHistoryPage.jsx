@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router";
 import {
   FaUser,
   FaPhone,
@@ -15,21 +16,20 @@ import html2canvas from "html2canvas";
 
 const UserHistoryPage = () => {
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState(null);
-  const [data, setData] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [profile, setProfile] = useState([]);
+  const [data, setData] = useState([]);
   const contentRef = useRef(null); // Ref to capture the content for PDF
+  const {userId} = useParams();
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5000/api/profile", {
+        const response = await axios.get(`http://localhost:5000/api/profile/history/${userId}`, {
           withCredentials: true,
         });
-        setProfile(response.data.data);
-        setData(response.data.userData);
-        setUserId(response.data.userData?._id || "defaultUserId");
+        setProfile(response?.data?.data);
+        setData(response?.data?.userData);
       } catch (error) {
         console.error("Error fetching profile data:", error);
         alert("Failed to load profile data");

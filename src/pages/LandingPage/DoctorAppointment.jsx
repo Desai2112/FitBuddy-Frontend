@@ -23,10 +23,6 @@ const DoctorAppointment = () => {
 
   // Form fields state
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    dob: '',
     visitType: '',
     reasonForVisit: ''
   });
@@ -319,7 +315,7 @@ const DoctorAppointment = () => {
           <div className="bg-white p-6 rounded-xl shadow-md">
             <h2 className="section-title text-xl font-semibold text-cyan-700 mb-6 pb-2 border-b-2 border-cyan-500">Patient Information</h2>
             <form>
-              <div className="form-group mb-4">
+              {/* <div className="form-group mb-4">
                 <label htmlFor="name" className="block mb-1 font-medium">Full Name</label>
                 <input
                   type="text"
@@ -355,17 +351,7 @@ const DoctorAppointment = () => {
                 />
               </div>
 
-              <div className="form-group mb-4">
-                <label htmlFor="dob" className="block mb-1 font-medium">Date of Birth</label>
-                <input
-                  type="date"
-                  id="dob"
-                  required
-                  className="w-full border rounded-lg px-3 py-2"
-                  value={formData.dob}
-                  onChange={handleInputChange}
-                />
-              </div>
+         */}
 
               <div className="form-group mb-4">
                 <label htmlFor="visitType" className="block mb-1 font-medium">Appointment Type</label>
