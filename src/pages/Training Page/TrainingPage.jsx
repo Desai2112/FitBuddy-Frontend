@@ -571,11 +571,10 @@ const TrainingPage = () => {
     </motion.div>
   )}
 </AnimatePresence>
-
         </div>
-      </PageWrapper>
-    </div>
-  );
-};
+      </main>
+</div>
+);
+}
 
 export default TrainingPage;
