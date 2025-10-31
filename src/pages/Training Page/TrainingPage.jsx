@@ -11,20 +11,16 @@ import {
   Html,
 } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
-import PageWrapper from "./PageWrapper.jsx";
 import AuthenticatedNavbar from "../../components/LandingPage/AuthenticatedNavbar";
-import "./TrainingPage.css";
-// Import enhanced exercise data
 import { exercises } from "../../data/exercises.js";
 
-// Preload models utility - will only load when needed
+// Preload models utility
 const modelCache = {};
 
 const preloadModel = (path) => {
   if (!modelCache[path]) {
     modelCache[path] = new Promise((resolve) => {
       useGLTF.preload(path);
-      // Small delay to ensure model is loaded
       setTimeout(() => resolve(true), 100);
     });
   }
@@ -34,21 +30,22 @@ const preloadModel = (path) => {
 // Loading screen component
 const LoadingScreen = ({ progress }) => (
   <Html center>
-    <div className="loading">
-      <div className="spinner"></div>
-      <p>Loading model... {Math.round(progress)}%</p>
+    <div className="flex flex-col items-center justify-center bg-gray-100/80 p-6 rounded-lg">
+      <div className="w-48 h-2 bg-gray-300 rounded-full overflow-hidden mb-2">
+        <div className="h-full bg-blue-500 transition-all duration-300" style={{ width: `${progress}%` }}></div>
+      </div>
+      <p className="text-gray-600 text-sm">Loading model... {Math.round(progress)}%</p>
     </div>
   </Html>
 );
 
-// Lazily loaded Model component
+// Model component
 const Model = ({ modelPath, isPlaying, setAnimationDuration }) => {
   const { scene, animations } = useGLTF(modelPath);
   const { actions, mixer } = useAnimations(animations, scene);
   const animationAction = useRef(null);
   const { progress } = useProgress();
-  
-  // Add better material visibility
+
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
@@ -61,16 +58,12 @@ const Model = ({ modelPath, isPlaying, setAnimationDuration }) => {
   }, [scene]);
 
   useEffect(() => {
-    // Get the first animation
     const animation = Object.values(actions)[0];
     if (animation) {
       animationAction.current = animation;
-      
-      // Set the animation duration for the parent component
       if (animation.getClip()) {
         setAnimationDuration(animation.getClip().duration);
       }
-      
       if (isPlaying) {
         animation.timeScale = 0.5;
         animation.reset().fadeIn(0.5).play();
@@ -78,7 +71,6 @@ const Model = ({ modelPath, isPlaying, setAnimationDuration }) => {
         animation.paused = true;
       }
     }
-
     return () => {
       if (mixer) {
         mixer.stopAllAction();
@@ -86,11 +78,9 @@ const Model = ({ modelPath, isPlaying, setAnimationDuration }) => {
     };
   }, [actions, mixer, setAnimationDuration]);
 
-  // Control animation play/pause
   useEffect(() => {
     if (animationAction.current && mixer) {
       const action = animationAction.current;
-      
       if (isPlaying) {
         if (action.paused) {
           action.paused = false;
@@ -111,63 +101,46 @@ const Model = ({ modelPath, isPlaying, setAnimationDuration }) => {
   return (
     <>
       <Float speed={0.2} rotationIntensity={0.05} floatIntensity={0.1} floatingRange={[0, 0.03]}>
-        <primitive 
-          object={scene} 
-          scale={0.8} 
-          position={[0, -0.8, 0]} 
-          visible={true}
-        />
+        <primitive object={scene} scale={0.8} position={[0, -0.8, 0]} visible={true} />
       </Float>
-      <ContactShadows 
-        position={[0, -1.4, 0]} 
-        opacity={0.6} 
-        scale={10} 
-        blur={1} 
-        far={10} 
-      />
+      <ContactShadows position={[0, -1.4, 0]} opacity={0.6} scale={10} blur={1} far={10} />
     </>
   );
 };
 
-// Lazy loaded 3D Scene component
-const ModelViewer = ({ modelPath, isPlaying, setAnimationDuration }) => {
+// Model Viewer component
+const ModelViewer = ({ modelPath, isPlaying, setAnimationDuration, toggleZoom }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  
+
   useEffect(() => {
-    // Start preloading the model
     preloadModel(modelPath).then(() => setIsLoaded(true));
   }, [modelPath]);
-  
+
   return (
     <Canvas camera={{ position: [0, 1, 2.5], fov: 50 }} shadows>
       <color attach="background" args={["#f8f9fa"]} />
       <fog attach="fog" args={["#f8f9fa", 5, 15]} />
-      
       <ambientLight intensity={0.5} />
-      <directionalLight 
-        position={[10, 10, 5]} 
-        intensity={0.8} 
-        castShadow 
+      <directionalLight
+        position={[10, 10, 5]}
+        intensity={0.8}
+        castShadow
         shadow-mapSize={[1024, 1024]}
       />
-      
       <Suspense fallback={<LoadingScreen progress={0} />}>
         {isLoaded && (
-          <>
-            <Model
-              key={modelPath}
-              modelPath={modelPath}
-              isPlaying={isPlaying}
-              setAnimationDuration={setAnimationDuration}
-            />
-          </>
+          <Model
+            key={modelPath}
+            modelPath={modelPath}
+            isPlaying={isPlaying}
+            setAnimationDuration={setAnimationDuration}
+          />
         )}
       </Suspense>
-      
-      <OrbitControls 
-        minPolarAngle={0} 
-        maxPolarAngle={Math.PI / 2} 
-        enableZoom={true} 
+      <OrbitControls
+        minPolarAngle={0}
+        maxPolarAngle={Math.PI / 2}
+        enableZoom={true}
         enablePan={true}
         minDistance={2}
         maxDistance={5}
@@ -184,45 +157,57 @@ const ModelViewer = ({ modelPath, isPlaying, setAnimationDuration }) => {
 };
 
 // Exercise Card Component
-const ExerciseCard = ({ exercise, isSelected, onClick }) => {
+const ExerciseCard = ({ exercise, isSelected, onClick, category }) => {
   return (
     <motion.div
-      className={`exercise-card ${isSelected ? 'selected' : ''}`}
+      className={`relative bg-white rounded-lg shadow-md p-4 cursor-pointer transition-shadow hover:shadow-lg ${isSelected ? "border-2 border-blue-500" : ""}`}
       onClick={onClick}
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
-      layoutId={`exercise-card-${exercise.name}`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.1 * (exercise.index % 10) }}
+      role="button"
+      aria-label={`Select ${exercise.name}`}
+      viewport={{ once: true }}
     >
-      <div className="card-content">
-        <div className="exercise-icon" style={{ backgroundColor: exercise.color || '#3b82f6' }}>
+      <span className="absolute top-2 right-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
+        {category}
+      </span>
+      <div className="flex flex-col gap-3">
+        <div
+          className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg"
+          style={{ backgroundColor: exercise.color || "#3b82f6" }}
+        >
           <span>{exercise.name.charAt(0)}</span>
         </div>
-        <h3>{exercise.name}</h3>
-        <div className="card-details">
-          <div className="benefits">
-            <h4>Benefits</h4>
-            <ul>
-              {exercise.benefits && exercise.benefits.slice(0, 2).map((benefit, index) => (
-                <li key={index}>{benefit}</li>
-              ))}
+        <h3 className="text-lg font-semibold text-gray-800">{exercise.name}</h3>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <h4 className="text-sm font-semibold text-gray-800">Benefits</h4>
+            <ul className="list-disc pl-4 text-sm text-gray-600">
+              {exercise.benefits &&
+                exercise.benefits.slice(0, 2).map((benefit, index) => (
+                  <li key={index}>{benefit}</li>
+                ))}
             </ul>
           </div>
-          <div className="steps">
-            <h4>Key Tips</h4>
-            <ol>
+          <div className="flex-1">
+            <h4 className="text-sm font-semibold text-gray-800">Key Tips</h4>
+            <ol className="list-decimal pl-4 text-sm text-gray-600">
               {exercise.tips.slice(0, 2).map((tip, index) => (
                 <li key={index}>{tip}</li>
               ))}
             </ol>
           </div>
         </div>
-        <div className="difficulty">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
           <span>Difficulty:</span>
-          <div className="difficulty-level">
+          <div className="flex gap-1">
             {[...Array(5)].map((_, i) => (
-              <span 
-                key={i} 
-                className={`difficulty-dot ${i < exercise.difficulty ? 'active' : ''}`}
+              <span
+                key={i}
+                className={`w-2 h-2 rounded-full ${i < exercise.difficulty ? "bg-blue-500" : "bg-gray-300"}`}
               ></span>
             ))}
           </div>
@@ -232,25 +217,35 @@ const ExerciseCard = ({ exercise, isSelected, onClick }) => {
   );
 };
 
-// Simplified Player Controls Component
-const PlayerControls = ({ isPlaying, togglePlay }) => {
+// Player Controls Component
+const PlayerControls = ({ isPlaying, togglePlay, toggleZoom }) => {
   return (
-    <div className="player-controls">
-      <div className="control-buttons">
+    <div className="sticky bottom-0 bg-white p-4 shadow-md">
+      <div className="flex justify-center gap-4">
         <button
           onClick={togglePlay}
-          className={`control-button play-pause ${isPlaying ? "playing" : ""}`}
+          className={`p-3 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 transition-colors ${isPlaying ? "bg-blue-600" : ""}`}
+          aria-label={isPlaying ? "Pause animation" : "Play animation"}
         >
           {isPlaying ? (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
               <rect x="6" y="4" width="4" height="16" rx="1" />
               <rect x="14" y="4" width="4" height="16" rx="1" />
             </svg>
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
               <path d="M6 4v16a1 1 0 0 0 1.5.86l12-8a1 1 0 0 0 0-1.72l-12-8A1 1 0 0 0 6 4z" />
             </svg>
           )}
+        </button>
+        <button
+          onClick={toggleZoom}
+          className="p-3 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 transition-colors"
+          aria-label="Toggle zoom"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+            <path d="M10 4h4v4h-4V4zm0 6h4v4h-4v-4zm6-6h4v4h-4V4zm0 6h4v4h-4v-4zM4 4h4v4H4V4zm0 6h4v4H4v-4zm6 10h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4z"/>
+          </svg>
         </button>
       </div>
     </div>
@@ -262,104 +257,116 @@ const TrainingPage = () => {
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [animationDuration, setAnimationDuration] = useState(1);
-  const [activeModelPath, setActiveModelPath] = useState('');
+  const [activeModelPath, setActiveModelPath] = useState("");
   const [isModelLoading, setIsModelLoading] = useState(false);
-  const [difficultyLevel, setDifficultyLevel] = useState('intermediate');
-  const [filterCategory, setFilterCategory] = useState('All');
+  const [difficultyLevel, setDifficultyLevel] = useState("intermediate");
+  const [filterCategory, setFilterCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("instructions");
+  const [isInstructionsCollapsed, setIsInstructionsCollapsed] = useState(false);
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
   const modelViewerRef = useRef(null);
-  
-  // Mock user data
+
   const user = {
     name: "John Doe",
     email: "john@example.com",
   };
 
-  // Enhance exercises with additional properties
+  // Debounce search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
   const enhancedExercises = exercises.map((exercise, index) => ({
     ...exercise,
-    color: [
-      '#3b82f6', // blue
-      '#ef4444', // red
-      '#10b981', // green
-      '#f59e0b', // amber
-      '#8b5cf6', // purple
-      '#ec4899', // pink
-    ][index % 6],
+    index,
+    color: ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"][index % 6],
+    category:
+      (exercise.primaryMuscle.toLowerCase().includes("chest") ||
+        exercise.primaryMuscle.toLowerCase().includes("shoulder") ||
+        exercise.primaryMuscle.toLowerCase().includes("tricep") ||
+        exercise.primaryMuscle.toLowerCase().includes("bicep") ||
+        exercise.primaryMuscle.toLowerCase().includes("back") ||
+        exercise.secondaryMuscle.toLowerCase().includes("chest") ||
+        exercise.secondaryMuscle.toLowerCase().includes("shoulder") ||
+        exercise.secondaryMuscle.toLowerCase().includes("tricep") ||
+        exercise.secondaryMuscle.toLowerCase().includes("bicep") ||
+        exercise.secondaryMuscle.toLowerCase().includes("back"))
+        ? "Upper Body"
+        : (exercise.primaryMuscle.toLowerCase().includes("quad") ||
+            exercise.primaryMuscle.toLowerCase().includes("hamstring") ||
+            exercise.primaryMuscle.toLowerCase().includes("glute") ||
+            exercise.primaryMuscle.toLowerCase().includes("calf") ||
+            exercise.secondaryMuscle.toLowerCase().includes("quad") ||
+            exercise.secondaryMuscle.toLowerCase().includes("hamstring") ||
+            exercise.secondaryMuscle.toLowerCase().includes("glute") ||
+            exercise.secondaryMuscle.toLowerCase().includes("calf"))
+        ? "Lower Body"
+        : (exercise.primaryMuscle.toLowerCase().includes("core") ||
+            exercise.primaryMuscle.toLowerCase().includes("ab") ||
+            exercise.primaryMuscle.toLowerCase().includes("oblique") ||
+            exercise.secondaryMuscle.toLowerCase().includes("core") ||
+            exercise.secondaryMuscle.toLowerCase().includes("ab") ||
+            exercise.secondaryMuscle.toLowerCase().includes("oblique"))
+        ? "Core"
+        : "All",
   }));
 
-  // Filter exercises by category
-  const filteredExercises = enhancedExercises.filter(exercise => {
-    if (filterCategory === 'All') return true;
-    
-    const muscles = (exercise.primaryMuscle + ' ' + exercise.secondaryMuscle).toLowerCase();
-    
-    switch(filterCategory) {
-      case 'Upper Body':
-        return muscles.includes('chest') || 
-               muscles.includes('shoulder') || 
-               muscles.includes('tricep') || 
-               muscles.includes('bicep') ||
-               muscles.includes('back');
-      case 'Lower Body':
-        return muscles.includes('quad') || 
-               muscles.includes('hamstring') || 
-               muscles.includes('glute') || 
-               muscles.includes('calf');
-      case 'Core':
-        return muscles.includes('core') || 
-               muscles.includes('ab') || 
-               muscles.includes('oblique');
-      default:
-        return true;
-    }
+  const filteredExercises = enhancedExercises.filter((exercise) => {
+    const matchesCategory =
+      filterCategory === "All" || exercise.category === filterCategory;
+    const matchesSearch = exercise.name.toLowerCase().includes(debouncedSearch.toLowerCase());
+    return matchesCategory && matchesSearch;
   });
 
-  // Handle play/pause
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
   };
 
-  // Handle card selection
+  const toggleZoom = () => {
+    // Placeholder for zoom functionality (requires OrbitControls modification)
+    console.log("Toggle zoom");
+  };
+
   const handleCardSelect = (index) => {
-    if (selectedExercise === index) {
-      return; // Already selected
-    }
-    
-    // Reset player state and update model path
+    if (selectedExercise === index) return;
     setIsPlaying(false);
     setIsModelLoading(true);
     setSelectedExercise(index);
     setActiveModelPath(filteredExercises[index].modelPath);
-    
-    // Scroll to model viewer after selection
+    setActiveTab("instructions");
+    setIsInstructionsCollapsed(false);
     setTimeout(() => {
       if (modelViewerRef.current) {
-        modelViewerRef.current.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'start'
-        });
+        modelViewerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }, 100);
   };
 
-  // Handle close model viewer
   const closeModelViewer = () => {
     setIsPlaying(false);
     setSelectedExercise(null);
+    setIsInstructionsCollapsed(false);
   };
 
-  // Handle filter change
   const handleFilterChange = (category) => {
     setFilterCategory(category);
     setSelectedExercise(null);
   };
 
-  // Handle difficulty change
   const handleDifficultyChange = (level) => {
     setDifficultyLevel(level);
   };
 
-  // Pre-load models for smoother experience - only when selecting an exercise
+  const copyTipsToClipboard = () => {
+    const tips = filteredExercises[selectedExercise].tips.join("\n");
+    navigator.clipboard.writeText(tips);
+    alert("Tips copied to clipboard!");
+  };
+
   useEffect(() => {
     if (selectedExercise !== null) {
       const modelPath = filteredExercises[selectedExercise].modelPath;
@@ -370,48 +377,78 @@ const TrainingPage = () => {
   }, [selectedExercise, filteredExercises]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      <AuthenticatedNavbar user={user} />
-      
-      <PageWrapper title="Exercise Library">
-        <div className="exercise-library">
-          <div className="exercise-filter">
-            <div className="filter-group">
-              <label>Filter by:</label>
-              <div className="filter-buttons">
-                <button 
-                  className={`filter-button ${filterCategory === 'All' ? 'active' : ''}`}
-                  onClick={() => handleFilterChange('All')}
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 font-sans">
+      <header className="sticky top-0 z-50 bg-gradient-to-r from-gray-50 to-gray-100 shadow-md p-6">
+        <AuthenticatedNavbar user={user} />
+      </header>
+
+      <main className="max-w-7xl mx-auto p-4 sm:p-6">
+        <div className="bg-white rounded-lg shadow-md p-4 mb-8">
+          <div className="relative mb-4">
+            <input
+              type="text"
+              placeholder="Search exercises..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full max-w-md p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              aria-label="Search exercises"
+            />
+            {searchQuery && (
+              <button
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800"
+                onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="w-5 h-5"
                 >
-                  All
-                </button>
-                <button 
-                  className={`filter-button ${filterCategory === 'Upper Body' ? 'active' : ''}`}
-                  onClick={() => handleFilterChange('Upper Body')}
-                >
-                  Upper Body
-                </button>
-                <button 
-                  className={`filter-button ${filterCategory === 'Lower Body' ? 'active' : ''}`}
-                  onClick={() => handleFilterChange('Lower Body')}
-                >
-                  Lower Body
-                </button>
-                <button 
-                  className={`filter-button ${filterCategory === 'Core' ? 'active' : ''}`}
-                  onClick={() => handleFilterChange('Core')}
-                >
-                  Core
-                </button>
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            )}
+            <div aria-live="polite" className="sr-only">
+              {filteredExercises.length} exercises found
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-semibold text-gray-800">Filter by:</label>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {["All", "Upper Body", "Lower Body", "Core"].map((category) => (
+                  <motion.button
+                    key={category}
+                    className={`px-4 py-2 border border-gray-300 rounded-md text-sm font-medium transition-colors relative ${
+                      filterCategory === category
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-white text-gray-800 hover:bg-blue-500 hover:text-white"
+                    }`}
+                    onClick={() => handleFilterChange(category)}
+                    aria-label={`Filter by ${category}`}
+                    aria-describedby={`filter-${category}`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {category}
+                    <span id={`filter-${category}`} className="sr-only">
+                      Filter exercises by {category}
+                    </span>
+                  </motion.button>
+                ))}
               </div>
             </div>
-            
-            <div className="difficulty-selector">
-              <label>Difficulty Level:</label>
-              <select 
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-semibold text-gray-800">Difficulty:</label>
+              <select
                 value={difficultyLevel}
                 onChange={(e) => handleDifficultyChange(e.target.value)}
-                className="difficulty-dropdown"
+                className="p-2 border border-gray-300 rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Select difficulty level"
               >
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
