@@ -3,6 +3,7 @@ import {
   FaFileAlt, FaPlus, FaFilter, FaSearch, FaEye, FaEyeSlash, FaTrash, FaSortAmountDown,
   FaFilePdf, FaFileImage, FaFileWord, FaFileExcel, FaFileMedical, FaFileContract, FaCheckCircle,
 } from "react-icons/fa";
+import axiosInstance from "../../api/axios"; // Import your axios instance
 
 const DocumentsSection = ({
   documents, setDocuments, toggleDocumentVisibility, showNotification, getDocumentType, formatFileSize,
@@ -12,6 +13,7 @@ const DocumentsSection = ({
   const [showAllDocuments, setShowAllDocuments] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const getDocumentIcon = (type) => {
     switch (type) {
@@ -46,6 +48,68 @@ const DocumentsSection = ({
     } catch (error) {
       console.error("Error deleting document:", error);
       showNotification("Failed to delete document", "error");
+    }
+  };
+
+  // Handle file upload with API call
+  const handleFileUpload = async (file) => {
+    if (!file) return;
+
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    if (file.size > maxSize) {
+      showNotification("File size exceeds 10MB limit", "error");
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 
+                          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    if (!allowedTypes.includes(file.type)) {
+      showNotification("Unsupported file format. Please upload PDF, JPG, PNG, DOCX, or XLSX files", "error");
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      // Create FormData
+      const formData = new FormData();
+      formData.append('pdf', file); // Backend expects 'pdf' field name
+
+      // Upload to API
+      const response = await axiosInstance.post("/api/profile/adddoc", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      console.log("Upload response:", response.data);
+
+      // Create new document object for local state
+      const newDoc = {
+        id: response.data.documentId || `doc-${Date.now()}`, // Use server ID if available
+        name: file.name,
+        url: response.data.url || URL.createObjectURL(file), // Use server URL if available
+        visible: true,
+        type: getDocumentType(file.name),
+        uploadDate: new Date().toISOString().split("T")[0],
+        size: Math.round(file.size / 1024), // Size in KB
+      };
+
+      // Update local state
+      setDocuments([...documents, newDoc]);
+      setIsUploadModalOpen(false);
+      showNotification("Document uploaded successfully");
+    } catch (error) {
+      console.error("Error uploading document:", error);
+      showNotification(
+        error.response?.data?.message || "Failed to upload document. Please try again.",
+        "error"
+      );
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -227,7 +291,8 @@ const DocumentsSection = ({
               <h2 className="text-xl font-semibold text-gray-800">Upload New Document</h2>
               <button
                 onClick={() => setIsUploadModalOpen(false)}
-                className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-all duration-200"
+                disabled={isUploading}
+                className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-all duration-200 disabled:opacity-50"
               >
                 <FaTrash className="text-lg" />
               </button>
@@ -235,27 +300,20 @@ const DocumentsSection = ({
             <div className="space-y-6">
               <div className="border-2 border-dashed border-teal-200 rounded-xl p-8 text-center bg-teal-50 transition-all duration-300 hover:border-teal-300">
                 <FaFileAlt className="text-5xl text-teal-400 mx-auto mb-4" />
-                <p className="text-gray-600 font-medium mb-3">Drag and drop files here or</p>
-                <label className="inline-block bg-teal-500 text-white px-5 py-2 rounded-lg cursor-pointer hover:bg-teal-600 transition-all duration-200 shadow-md hover:shadow-lg">
-                  Browse Files
+                <p className="text-gray-600 font-medium mb-3">
+                  {isUploading ? "Uploading..." : "Drag and drop files here or"}
+                </p>
+                <label className={`inline-block bg-teal-500 text-white px-5 py-2 rounded-lg cursor-pointer hover:bg-teal-600 transition-all duration-200 shadow-md hover:shadow-lg ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                  {isUploading ? "Uploading..." : "Browse Files"}
                   <input
                     type="file"
                     className="hidden"
+                    accept=".pdf,.jpg,.jpeg,.png,.docx,.xlsx"
+                    disabled={isUploading}
                     onChange={(e) => {
                       const file = e.target.files[0];
                       if (file) {
-                        const newDoc = {
-                          id: `doc-${Date.now()}`,
-                          name: file.name,
-                          url: URL.createObjectURL(file),
-                          visible: true,
-                          type: getDocumentType(file.name),
-                          uploadDate: new Date().toISOString().split("T")[0],
-                          size: Math.round(file.size / 1024),
-                        };
-                        setDocuments([...documents, newDoc]);
-                        setIsUploadModalOpen(false);
-                        showNotification("Document uploaded successfully");
+                        handleFileUpload(file);
                       }
                     }}
                   />

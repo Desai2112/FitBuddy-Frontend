@@ -34,12 +34,6 @@ const ProfileHeader = ({ data, editMode, toggleEditMode, handleLogout }) => {
             ) : (
               <>
                 <button
-                  className="bg-white text-teal-600 px-4 py-2 rounded-lg shadow hover:bg-gray-100 hover:shadow-md transition flex items-center transform hover:scale-105"
-                  onClick={toggleEditMode}
-                >
-                  <FaEdit className="mr-2" /> Edit Profile
-                </button>
-                <button
                   className="bg-white text-red-600 px-4 py-2 rounded-lg shadow hover:bg-gray-100 hover:shadow-md transition flex items-center transform hover:scale-105"
                   onClick={handleLogout}
                 >

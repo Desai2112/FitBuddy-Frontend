@@ -8,7 +8,7 @@ const Sidebar = () => {
 
   const menuItems = [
     { icon: FaCalendarAlt, text: 'Appointments', path: '/doctor/appointments' },
-    { icon: FaQrcode, text: 'Scanner', path: '/doctor/scanner' },
+    // { icon: FaQrcode, text: 'Scanner', path: '/doctor/scanner' },
     { icon: FaUser, text: 'Profile', path: '/doctor/profile' },
   ];
 

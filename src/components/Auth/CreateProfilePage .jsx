@@ -46,7 +46,7 @@ const CreateProfilePage = () => {
   const [documents, setDocuments] = useState([]);
   const [dragActive, setDragActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 5;
+  const totalSteps = 4;
 
   const handleInputChange = (section, field, value) => {
     if (section) {
@@ -188,7 +188,7 @@ const handleSubmit = async () => {
   const renderStepIndicator = () => (
     <div className="mb-8">
       <div className="flex items-center justify-between">
-        {[1, 2, 3, 4, 5].map((step) => (
+        {[1, 2, 3, 4].map((step) => (
           <React.Fragment key={step}>
             <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
               currentStep >= step 
@@ -197,7 +197,7 @@ const handleSubmit = async () => {
             }`}>
               {step}
             </div>
-            {step < 5 && (
+            {step < 4 && (
               <div className={`flex-1 h-1 mx-2 ${
                 currentStep > step ? 'bg-teal-500' : 'bg-gray-300'
               }`}></div>
@@ -210,7 +210,6 @@ const handleSubmit = async () => {
         <span>Contact</span>
         <span>Address</span>
         <span>Health</span>
-        <span>Documents</span>
       </div>
     </div>
   );
@@ -613,73 +612,7 @@ const handleSubmit = async () => {
     </div>
   );
 
-  const renderDocuments = () => (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center mb-4">
-          <Upload className="w-5 h-5 text-teal-500 mr-2" />
-          <h3 className="text-lg font-semibold text-gray-800">Medical Documents</h3>
-        </div>
-        
-        <div 
-          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-            dragActive 
-              ? 'border-teal-400 bg-teal-50' 
-              : 'border-gray-300 hover:border-teal-400 hover:bg-gray-50'
-          }`}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-        >
-          <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600 mb-2">
-            Drag and drop files here, or{' '}
-            <label className="text-teal-600 cursor-pointer hover:text-teal-700">
-              browse
-              <input
-                type="file"
-                multiple
-                className="hidden"
-                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                onChange={(e) => handleFileUpload(e.target.files)}
-              />
-            </label>
-          </p>
-          <p className="text-sm text-gray-500">
-            Supported formats: PDF, JPG, PNG, DOC, DOCX (Max 10MB each)
-          </p>
-        </div>
-        
-        {documents.length > 0 && (
-          <div className="mt-6">
-            <h4 className="text-md font-medium text-gray-700 mb-3">Uploaded Documents</h4>
-            <div className="space-y-2">
-              {documents.map((doc) => (
-                <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center flex-1">
-                    <FileText className="w-5 h-5 text-gray-400 mr-3" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{doc.name}</p>
-                      <p className="text-xs text-gray-500">
-                        {formatFileSize(doc.size)} • {doc.type}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => removeDocument(doc.id)}
-                    className="ml-3 text-red-400 hover:text-red-600 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+
 
   const renderCurrentStep = () => {
     switch (currentStep) {
@@ -691,8 +624,6 @@ const handleSubmit = async () => {
         return renderAddressInfo();
       case 4:
         return renderHealthInfo();
-      case 5:
-        return renderDocuments();
       default:
         return renderPersonalInfo();
     }

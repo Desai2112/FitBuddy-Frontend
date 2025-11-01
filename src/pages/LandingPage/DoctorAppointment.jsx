@@ -645,8 +645,7 @@ const DoctorAppointment = () => {
                         ${
                           day.available
                             ? "cursor-pointer hover:bg-cyan-50 border-2 " +
-                              (selectedDate ===
-                              day.date.toISOString().split("T")[0]
+                              (selectedDate === formatLocalDate(day.date)
                                 ? "border-cyan-500 bg-cyan-50 text-cyan-600"
                                 : "border-transparent hover:border-cyan-200")
                             : "text-gray-400 cursor-not-allowed bg-gray-50"
